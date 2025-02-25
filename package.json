@@ -12,14 +12,15 @@
   },
   "license": "ISC",
   "author": "Lucas Bastos",
-  "type": "module",
+  "type": "commonjs",
   "main": "dist/app.js",
   "scripts": {
-    "dev": "nodemon --watch src --ext ts --exec 'tsc && node dist/main.js'",
+    "dev": "nodemon --watch src --ext ts --exec 'tsc && node dist/server.js'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
