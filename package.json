@@ -1,0 +1,31 @@
+{
+  "name": "physical-store",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Luxxer1/physical-store#readme",
+  "bugs": {
+    "url": "https://github.com/Luxxer1/physical-store/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Luxxer1/physical-store.git"
+  },
+  "license": "ISC",
+  "author": "Lucas Bastos",
+  "type": "module",
+  "main": "dist/app.js",
+  "scripts": {
+    "dev": "nodemon --watch src --ext ts --exec 'tsc && node dist/main.js'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.5",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  }
+}
