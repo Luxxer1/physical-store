@@ -1,12 +1,11 @@
 import express from 'express';
+import storeRouter from './routes/storeRoutes';
 
 const app = express();
 
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send('Hello World');
-});
+app.use('/stores', storeRouter);
 
 export default app;
 
