@@ -4,9 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const storeRoutes_1 = __importDefault(require("./routes/storeRoutes"));
-const app = (0, express_1.default)();
-app.use(express_1.default.json());
-app.use('/stores', storeRoutes_1.default);
-exports.default = app;
-//# sourceMappingURL=app.js.map
+const storeController_1 = require("../controllers/storeController");
+const router = express_1.default.Router();
+router.route('/').get(storeController_1.getAllStores);
+exports.default = router;
+//# sourceMappingURL=storeRoutes.js.map
