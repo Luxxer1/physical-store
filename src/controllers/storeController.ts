@@ -1,6 +1,8 @@
 import Store from '../models/storeModel';
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import fetch from 'node-fetch';
+import AppError from '../utils/appError';
+import { catchAsync } from '../utils/catchAsync';
 
 interface CepResponse {
   cep: string;
@@ -15,52 +17,40 @@ interface CepResponse {
   erro?: boolean;
 }
 
-export const getAllStores = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  const stores = await Store.find();
-  res.status(200).json({
-    status: 'success',
-    data: {
-      stores,
-    },
-  });
-};
-
-export const getNearbyStores = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  let { cep } = req.params;
-
-  if (!/^\d{8}$/.test(cep)) {
-    res.status(400).json({
-      status: 'error',
-      message: 'CEP inválido. O CEP deve ter exatamente 8 dígitos numéricos.',
+export const getAllStores = catchAsync(
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const stores = await Store.find();
+    res.status(200).json({
+      status: 'success',
+      data: {
+        stores,
+      },
     });
-    return;
   }
+);
 
-  try {
+export const getNearbyStores = catchAsync(
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    let { cep } = req.params;
+
+    if (!/^\d{8}$/.test(cep)) {
+      res.status(400).json({
+        status: 'error',
+        message: 'CEP inválido. O CEP deve ter exatamente 8 dígitos numéricos.',
+      });
+      return;
+    }
+
     const cepResponse = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
 
     if (!cepResponse.ok) {
-      res.status(404).json({
-        status: 'error',
-        message: 'Erro ao acessar a API do ViaCEP',
-      });
-      return;
+      return next(new AppError('Erro ao acessar a API do ViaCEP', 404));
     }
 
     const cepData = (await cepResponse.json()) as CepResponse;
 
     if (cepData.erro) {
-      res.status(404).json({
-        status: 'error',
-        message: 'CEP não encontrado',
-      });
-      return;
+      return next(new AppError('CEP não encontrado', 404));
     }
 
     // Calcular distancia
@@ -71,9 +61,5 @@ export const getNearbyStores = async (
       status: 'success',
     });
     // const data = await response.json();
-  } catch (err) {
-    res.status(500).json({
-      status: 'error',
-    });
   }
-};
+);

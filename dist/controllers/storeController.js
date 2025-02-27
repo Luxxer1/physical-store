@@ -6,7 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getNearbyStores = exports.getAllStores = void 0;
 const storeModel_1 = __importDefault(require("../models/storeModel"));
 const node_fetch_1 = __importDefault(require("node-fetch"));
-const getAllStores = async (req, res) => {
+const appError_1 = __importDefault(require("../utils/appError"));
+const catchAsync_1 = require("../utils/catchAsync");
+exports.getAllStores = (0, catchAsync_1.catchAsync)(async (req, res, next) => {
     const stores = await storeModel_1.default.find();
     res.status(200).json({
         status: 'success',
@@ -14,9 +16,8 @@ const getAllStores = async (req, res) => {
             stores,
         },
     });
-};
-exports.getAllStores = getAllStores;
-const getNearbyStores = async (req, res) => {
+});
+exports.getNearbyStores = (0, catchAsync_1.catchAsync)(async (req, res, next) => {
     let { cep } = req.params;
     if (!/^\d{8}$/.test(cep)) {
         res.status(400).json({
@@ -25,33 +26,17 @@ const getNearbyStores = async (req, res) => {
         });
         return;
     }
-    try {
-        const cepResponse = await (0, node_fetch_1.default)(`https://viacep.com.br/ws/${cep}/json/`);
-        if (!cepResponse.ok) {
-            res.status(404).json({
-                status: 'error',
-                message: 'Erro ao acessar a API do ViaCEP',
-            });
-            return;
-        }
-        const cepData = (await cepResponse.json());
-        if (cepData.erro) {
-            res.status(404).json({
-                status: 'error',
-                message: 'CEP não encontrado',
-            });
-            return;
-        }
-        console.log(cepData);
-        res.status(200).json({
-            status: 'success',
-        });
+    const cepResponse = await (0, node_fetch_1.default)(`https://viacep.com.br/ws/${cep}/json/`);
+    if (!cepResponse.ok) {
+        return next(new appError_1.default('Erro ao acessar a API do ViaCEP', 404));
     }
-    catch (err) {
-        res.status(500).json({
-            status: 'error',
-        });
+    const cepData = (await cepResponse.json());
+    if (cepData.erro) {
+        return next(new appError_1.default('CEP não encontrado', 404));
     }
-};
-exports.getNearbyStores = getNearbyStores;
+    console.log(cepData);
+    res.status(200).json({
+        status: 'success',
+    });
+});
 //# sourceMappingURL=storeController.js.map
