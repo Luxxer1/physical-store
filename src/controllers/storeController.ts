@@ -17,6 +17,8 @@ interface CepResponse {
   erro?: boolean;
 }
 
+// create store
+
 export const getAllStores = catchAsync(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const stores = await Store.find();
