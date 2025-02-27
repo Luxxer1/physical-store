@@ -21,7 +21,7 @@ exports.getNearbyStores = (0, catchAsync_1.catchAsync)(async (req, res, next) =>
     let { cep } = req.params;
     if (!/^\d{8}$/.test(cep)) {
         res.status(400).json({
-            status: 'error',
+            status: 'fail',
             message: 'CEP inválido. O CEP deve ter exatamente 8 dígitos numéricos.',
         });
         return;
@@ -32,7 +32,7 @@ exports.getNearbyStores = (0, catchAsync_1.catchAsync)(async (req, res, next) =>
     }
     const cepData = (await cepResponse.json());
     if (cepData.erro) {
-        return next(new appError_1.default('CEP não encontrado', 404));
+        return next(new appError_1.default('CEP não encontrado.', 404));
     }
     console.log(cepData);
     res.status(200).json({

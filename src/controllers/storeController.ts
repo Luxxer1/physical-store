@@ -35,7 +35,7 @@ export const getNearbyStores = catchAsync(
 
     if (!/^\d{8}$/.test(cep)) {
       res.status(400).json({
-        status: 'error',
+        status: 'fail',
         message: 'CEP inválido. O CEP deve ter exatamente 8 dígitos numéricos.',
       });
       return;
@@ -50,7 +50,7 @@ export const getNearbyStores = catchAsync(
     const cepData = (await cepResponse.json()) as CepResponse;
 
     if (cepData.erro) {
-      return next(new AppError('CEP não encontrado', 404));
+      return next(new AppError('CEP não encontrado.', 404));
     }
 
     // Calcular distancia
