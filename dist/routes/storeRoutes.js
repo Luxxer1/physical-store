@@ -7,5 +7,6 @@ const express_1 = __importDefault(require("express"));
 const storeController_1 = require("../controllers/storeController");
 const router = express_1.default.Router();
 router.route('/').get(storeController_1.getAllStores);
+router.route('/:cep').get(storeController_1.getNearbyStores);
 exports.default = router;
 //# sourceMappingURL=storeRoutes.js.map
