@@ -55,9 +55,11 @@ export const getNearbyStores = catchAsync(
       return next(new AppError('CEP não encontrado.', 404));
     }
 
-    // Calcular distancia
-
     console.log(cepData);
+
+    const geocodeRes = await fetch(``);
+
+    // Calcular distancia
 
     res.status(200).json({
       status: 'success',
