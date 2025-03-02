@@ -1,6 +1,6 @@
+import fetch from 'node-fetch';
 import Store from '../models/storeModel';
 import { Request, Response, NextFunction } from 'express';
-import fetch from 'node-fetch';
 import AppError from '../utils/appError';
 import { catchAsync } from '../utils/catchAsync';
 
@@ -57,7 +57,22 @@ export const getNearbyStores = catchAsync(
 
     console.log(cepData);
 
-    const geocodeRes = await fetch(``);
+    const address = encodeURIComponent(`
+      ${cepData.logradouro},
+      ${cepData.bairro},
+      ${cepData.localidade},
+      ${cepData.uf}
+    `);
+
+    if (!process.env.API_KEY) {
+      throw new Error('API KEY is not defined');
+    }
+
+    const geocodeRes = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${process.env.API_KEY}`
+    );
+
+    console.log(geocodeRes);
 
     // Calcular distancia
 
