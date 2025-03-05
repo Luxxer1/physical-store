@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import axios from 'axios';
 import Store from '../models/storeModel';
 import { Request, Response, NextFunction } from 'express';
 import AppError from '../utils/appError';
@@ -36,20 +36,17 @@ export const getNearbyStores = catchAsync(
     let { cep } = req.params;
 
     if (!/^\d{8}$/.test(cep)) {
-      res.status(400).json({
-        status: 'fail',
-        message: 'CEP inválido. O CEP deve ter exatamente 8 dígitos numéricos.',
-      });
-      return;
+      return next(
+        new AppError(
+          'CEP inválido. O CEP deve ter exatamente 8 dígitos numéricos.',
+          400
+        )
+      );
     }
 
-    const cepResponse = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-
-    if (!cepResponse.ok) {
-      return next(new AppError('Erro ao acessar a API do ViaCEP', 404));
-    }
-
-    const cepData = (await cepResponse.json()) as CepResponse;
+    const { data: cepData } = await axios.get<CepResponse>(
+      `https://viacep.com.br/ws/${cep}/json/`
+    );
 
     if (cepData.erro) {
       return next(new AppError('CEP não encontrado.', 404));
@@ -68,11 +65,11 @@ export const getNearbyStores = catchAsync(
       throw new Error('API KEY is not defined');
     }
 
-    const geocodeRes = await fetch(
+    const { data: geocodeData } = await axios.get(
       `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${process.env.API_KEY}`
     );
 
-    console.log(geocodeRes);
+    console.log(geocodeData);
 
     // Calcular distancia
 
