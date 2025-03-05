@@ -37,9 +37,45 @@ exports.getNearbyStores = (0, catchAsync_1.catchAsync)(async (req, res, next) =>
         throw new Error('API KEY is not defined');
     }
     const { data: geocodeData } = await axios_1.default.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${process.env.API_KEY}`);
-    console.log(geocodeData);
+    if (!geocodeData.results || geocodeData.results.length === 0) {
+        return next(new appError_1.default('Não foi possível obter as coordenadas do endereço.', 404));
+    }
+    const { lat, lng } = geocodeData.results[0].geometry.location;
+    const origin = `${lat},${lng}`;
+    const stores = await storeModel_1.default.find();
+    const nearbyStores = [];
+    for (const store of stores) {
+        if (store.location && store.location.coordinates) {
+            const [storeLng, storeLat] = store.location.coordinates;
+            const destination = `${storeLat},${storeLng}`;
+            const distance = await calculateDistance(origin, destination);
+            if (distance <= 100) {
+                nearbyStores.push({
+                    ...store.toObject(),
+                    distance: `${distance} km`,
+                    numericDistance: distance,
+                });
+            }
+        }
+    }
+    nearbyStores.sort((a, b) => a.numericDistance - b.numericDistance);
+    nearbyStores.forEach((store) => {
+        const storeOptionalFields = store;
+        delete storeOptionalFields.numericDistance;
+    });
     res.status(200).json({
         status: 'success',
+        data: {
+            stores: nearbyStores,
+        },
     });
 });
+const calculateDistance = async (origin, destination) => {
+    const { data } = await axios_1.default.get(`https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&key=${process.env.API_KEY}`);
+    if (data.status !== 'OK' || !data.routes || !data.routes.length) {
+        throw new Error('Não foi possível calcular a distância.');
+    }
+    const distance = data.routes[0].legs[0].distance.value;
+    return distance / 1000;
+};
 //# sourceMappingURL=storeController.js.map
