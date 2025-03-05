@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getNearbyStores = exports.getAllStores = void 0;
-const node_fetch_1 = __importDefault(require("node-fetch"));
+const axios_1 = __importDefault(require("axios"));
 const storeModel_1 = __importDefault(require("../models/storeModel"));
 const appError_1 = __importDefault(require("../utils/appError"));
 const catchAsync_1 = require("../utils/catchAsync");
@@ -20,17 +20,9 @@ exports.getAllStores = (0, catchAsync_1.catchAsync)(async (req, res, next) => {
 exports.getNearbyStores = (0, catchAsync_1.catchAsync)(async (req, res, next) => {
     let { cep } = req.params;
     if (!/^\d{8}$/.test(cep)) {
-        res.status(400).json({
-            status: 'fail',
-            message: 'CEP inválido. O CEP deve ter exatamente 8 dígitos numéricos.',
-        });
-        return;
+        return next(new appError_1.default('CEP inválido. O CEP deve ter exatamente 8 dígitos numéricos.', 400));
     }
-    const cepResponse = await (0, node_fetch_1.default)(`https://viacep.com.br/ws/${cep}/json/`);
-    if (!cepResponse.ok) {
-        return next(new appError_1.default('Erro ao acessar a API do ViaCEP', 404));
-    }
-    const cepData = (await cepResponse.json());
+    const { data: cepData } = await axios_1.default.get(`https://viacep.com.br/ws/${cep}/json/`);
     if (cepData.erro) {
         return next(new appError_1.default('CEP não encontrado.', 404));
     }
@@ -44,8 +36,8 @@ exports.getNearbyStores = (0, catchAsync_1.catchAsync)(async (req, res, next) =>
     if (!process.env.API_KEY) {
         throw new Error('API KEY is not defined');
     }
-    const geocodeRes = await (0, node_fetch_1.default)(`https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${process.env.API_KEY}`);
-    console.log(geocodeRes);
+    const { data: geocodeData } = await axios_1.default.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${process.env.API_KEY}`);
+    console.log(geocodeData);
     res.status(200).json({
         status: 'success',
     });
