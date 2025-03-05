@@ -15,12 +15,15 @@
   "type": "commonjs",
   "main": "dist/app.js",
   "scripts": {
-    "dev": "nodemon --watch src --ext ts --exec 'tsc && node dist/server.js'",
+    "dev": "nodemon --watch src --ext ts --exec \"tsc && node dist/server.js\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "node-fetch": "^3.3.2"
+    "mongoose": "^8.11.0",
+    "node-fetch": "^3.3.2",
+    "pg": "^8.13.3"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",

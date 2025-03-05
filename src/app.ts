@@ -1,5 +1,8 @@
 import express from 'express';
+import { Request, Response, NextFunction } from 'express';
 import storeRouter from './routes/storeRoutes';
+import AppError from './utils/appError';
+import { globalErrorHandler } from './controllers/errorController';
 
 const app = express();
 
@@ -7,11 +10,15 @@ app.use(express.json());
 
 app.use('/stores', storeRouter);
 
+app.all('*', (req: Request, res: Response, next: NextFunction) => {
+  next(
+    new AppError(
+      `Não foi possível encontrar ${req.originalUrl} no servidor`,
+      404
+    )
+  );
+});
+
+app.use(globalErrorHandler);
+
 export default app;
-
-// import fetch from "node-fetch";
-
-// const response = await fetch("https://viacep.com.br/ws/50930070/json/");
-// const data = await response.json();
-
-// console.log(data);
