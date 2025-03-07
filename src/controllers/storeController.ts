@@ -3,6 +3,7 @@ import Store from '../models/storeModel';
 import { Request, Response, NextFunction } from 'express';
 import AppError from '../utils/appError';
 import { catchAsync } from '../utils/catchAsync';
+import logger from '../utils/logger';
 
 interface CepResponse {
   cep: string;
@@ -20,6 +21,7 @@ interface CepResponse {
 export const getAllStores = catchAsync(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const stores = await Store.find();
+    logger.info('Buscando todas as lojas...');
     res.status(200).json({
       status: 'success',
       data: {

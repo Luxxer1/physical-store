@@ -8,8 +8,10 @@ const axios_1 = __importDefault(require("axios"));
 const storeModel_1 = __importDefault(require("../models/storeModel"));
 const appError_1 = __importDefault(require("../utils/appError"));
 const catchAsync_1 = require("../utils/catchAsync");
+const logger_1 = __importDefault(require("../utils/logger"));
 exports.getAllStores = (0, catchAsync_1.catchAsync)(async (req, res, next) => {
     const stores = await storeModel_1.default.find();
+    logger_1.default.info('Buscando todas as lojas...');
     res.status(200).json({
         status: 'success',
         data: {
