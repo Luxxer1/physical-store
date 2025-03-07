@@ -44,7 +44,7 @@ export const getAllStores = catchAsync(
 
 export const getNearbyStores = catchAsync(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    let { cep } = req.params;
+    const { cep } = req.params;
 
     if (!/^\d{8}$/.test(cep)) {
       return next(
@@ -68,7 +68,7 @@ export const getNearbyStores = catchAsync(
     );
 
     if (!process.env.API_KEY) {
-      return next(new AppError('API KEY is not defined', 500));
+      return next(new AppError('API KEY não definida', 500));
     }
 
     const { data: geocodeData } = await axios.get(
