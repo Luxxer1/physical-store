@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from 'express';
 import AppError from '../utils/appError';
 import { catchAsync } from '../utils/catchAsync';
 import logger from '../utils/logger';
-import { calculateDistance } from '../utils/distanceService';
+import { calculateDistance } from '../utils/calculateDistance';
 import { formatNearbyStores } from '../utils/storeFormatter';
 
 const MAX_DISTANCE_KM = 100;
