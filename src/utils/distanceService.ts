@@ -1,4 +1,5 @@
 import axios from 'axios';
+import AppError from './appError';
 
 export const calculateDistance = async (
   origin: string,
@@ -9,7 +10,7 @@ export const calculateDistance = async (
   );
 
   if (data.status !== 'OK' || !data.routes || !data.routes.length) {
-    throw new Error('Não foi possível calcular a distância.');
+    throw new AppError('Não foi possível calcular a distância.', 500);
   }
 
   const distance = data.routes[0].legs[0].distance.value;

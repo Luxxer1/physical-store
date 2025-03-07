@@ -10,6 +10,8 @@ const appError_1 = __importDefault(require("../utils/appError"));
 const catchAsync_1 = require("../utils/catchAsync");
 const logger_1 = __importDefault(require("../utils/logger"));
 const distanceService_1 = require("../utils/distanceService");
+const storeFormatter_1 = require("../utils/storeFormatter");
+const MAX_DISTANCE_KM = 100;
 exports.getAllStores = (0, catchAsync_1.catchAsync)(async (req, res, next) => {
     const stores = await storeModel_1.default.find();
     logger_1.default.info('Buscando todas as lojas...');
@@ -29,12 +31,7 @@ exports.getNearbyStores = (0, catchAsync_1.catchAsync)(async (req, res, next) =>
     if (cepData.erro) {
         return next(new appError_1.default('CEP não encontrado.', 404));
     }
-    const address = encodeURIComponent(`
-      ${cepData.logradouro},
-      ${cepData.bairro},
-      ${cepData.localidade},
-      ${cepData.uf}
-    `);
+    const address = encodeURIComponent(`${cepData.logradouro}, ${cepData.bairro}, ${cepData.localidade}, ${cepData.uf}`);
     if (!process.env.API_KEY) {
         throw new Error('API KEY is not defined');
     }
@@ -52,7 +49,7 @@ exports.getNearbyStores = (0, catchAsync_1.catchAsync)(async (req, res, next) =>
             const [storeLng, storeLat] = store.location.coordinates;
             const destination = `${storeLat},${storeLng}`;
             const distance = await (0, distanceService_1.calculateDistance)(origin, destination);
-            if (distance <= 100) {
+            if (distance <= MAX_DISTANCE_KM) {
                 nearbyStores.push({
                     ...store.toObject(),
                     distance: `${distance} km`,
@@ -61,15 +58,11 @@ exports.getNearbyStores = (0, catchAsync_1.catchAsync)(async (req, res, next) =>
             }
         }
     }
-    nearbyStores.sort((a, b) => a.numericDistance - b.numericDistance);
-    nearbyStores.forEach((store) => {
-        const storeOptionalFields = store;
-        delete storeOptionalFields.numericDistance;
-    });
+    const formattedStores = (0, storeFormatter_1.formatNearbyStores)(nearbyStores);
     res.status(200).json({
         status: 'success',
         data: {
-            stores: nearbyStores,
+            stores: formattedStores,
         },
     });
 });

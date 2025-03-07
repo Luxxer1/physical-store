@@ -5,6 +5,9 @@ import AppError from '../utils/appError';
 import { catchAsync } from '../utils/catchAsync';
 import logger from '../utils/logger';
 import { calculateDistance } from '../utils/distanceService';
+import { formatNearbyStores } from '../utils/storeFormatter';
+
+const MAX_DISTANCE_KM = 100;
 
 interface CepResponse {
   cep: string;
@@ -55,12 +58,9 @@ export const getNearbyStores = catchAsync(
       return next(new AppError('CEP não encontrado.', 404));
     }
 
-    const address = encodeURIComponent(`
-      ${cepData.logradouro},
-      ${cepData.bairro},
-      ${cepData.localidade},
-      ${cepData.uf}
-    `);
+    const address = encodeURIComponent(
+      `${cepData.logradouro}, ${cepData.bairro}, ${cepData.localidade}, ${cepData.uf}`
+    );
 
     if (!process.env.API_KEY) {
       throw new Error('API KEY is not defined');
@@ -91,7 +91,7 @@ export const getNearbyStores = catchAsync(
 
         const distance = await calculateDistance(origin, destination);
 
-        if (distance <= 100) {
+        if (distance <= MAX_DISTANCE_KM) {
           nearbyStores.push({
             ...store.toObject(),
             distance: `${distance} km`,
@@ -103,17 +103,12 @@ export const getNearbyStores = catchAsync(
 
     // case dont found nearby stores
 
-    nearbyStores.sort((a, b) => a.numericDistance - b.numericDistance);
-
-    nearbyStores.forEach((store) => {
-      const storeOptionalFields = store as Partial<typeof store>;
-      delete storeOptionalFields.numericDistance;
-    });
+    const formattedStores = formatNearbyStores(nearbyStores);
 
     res.status(200).json({
       status: 'success',
       data: {
-        stores: nearbyStores,
+        stores: formattedStores,
       },
     });
   }
