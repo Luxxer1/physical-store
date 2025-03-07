@@ -90,7 +90,7 @@ export const getNearbyStores = catchAsync(
 
     if (nearbyStores.length === 0) {
       return next(
-        new AppError(`Nenhuma loja encontrada próximo ao CEP: ${cep}`, 404)
+        new AppError(`Nenhuma loja encontrada próxima ao CEP: ${cep}`, 404)
       );
     }
 

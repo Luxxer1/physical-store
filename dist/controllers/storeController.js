@@ -48,7 +48,7 @@ exports.getNearbyStores = (0, catchAsync_1.catchAsync)(async (req, res, next) =>
     logger_1.default.info(`Buscando lojas próximas ao CEP: ${cep}`);
     const nearbyStores = await (0, storeService_1.getNearbyStoresWithDistance)(origin);
     if (nearbyStores.length === 0) {
-        return next(new appError_1.default(`Nenhuma loja encontrada próximo ao CEP: ${cep}`, 404));
+        return next(new appError_1.default(`Nenhuma loja encontrada próxima ao CEP: ${cep}`, 404));
     }
     const formattedStores = new storeFormatter_1.default(nearbyStores).sort().format();
     if (formattedStores.length === 1) {
