@@ -1,4 +1,1 @@
-2025-03-07T16:15:28.037Z [ERROR]: [500] Algo deu errado! - GET /stores/69880000
-2025-03-07T16:43:46.435Z [ERROR]: [500] Não foi possível calcular a distância. - GET /stores/69880000
-2025-03-07T20:20:01.515Z [ERROR]: [500] Não foi possível calcular a distância. - GET /stores/69880000
-2025-03-07T20:30:48.062Z [ERROR]: [500] Não foi possível calcular a distância. - GET /stores/69880000
+{"level":"error","message":"[500] Não foi possível calcular a distância. - GET /stores/69880000","timestamp":"2025-03-07T21:54:00.667Z"}
