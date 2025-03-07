@@ -33,12 +33,12 @@ export const getAllStores = catchAsync(
 
     logger.info('Todas as lojas encontradas com sucesso.');
 
-    const formattedStore = new StoreFormatter(stores).format();
+    const formattedStores = new StoreFormatter(stores).format();
 
     res.status(200).json({
       status: 'success',
       data: {
-        stores: formattedStore,
+        stores: formattedStores,
       },
     });
   }
