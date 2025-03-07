@@ -157,3 +157,7 @@
 {"level":"info","message":"DB connection successful!","timestamp":"2025-03-07T20:45:33.157Z"}
 {"level":"info","message":"Server running at port 8000","timestamp":"2025-03-07T20:45:54.543Z"}
 {"level":"info","message":"DB connection successful!","timestamp":"2025-03-07T20:45:55.134Z"}
+{"level":"info","message":"Server running at port 8000","timestamp":"2025-03-07T20:55:23.907Z"}
+{"level":"info","message":"DB connection successful!","timestamp":"2025-03-07T20:55:24.719Z"}
+{"level":"info","message":"Buscando todas as lojas...","timestamp":"2025-03-07T20:55:29.739Z"}
+{"level":"info","message":"Todas as lojas encontradas com sucesso.","timestamp":"2025-03-07T20:55:29.801Z"}

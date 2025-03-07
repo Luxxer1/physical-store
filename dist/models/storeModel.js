@@ -8,6 +8,7 @@ const storeSchema = new mongoose_1.default.Schema({
     storeName: String,
     zipCode: String,
     address: String,
+    number: String,
     neighborhood: String,
     city: String,
     state: String,

@@ -4,6 +4,7 @@ const storeSchema = new mongoose.Schema({
   storeName: String,
   zipCode: String,
   address: String,
+  number: String,
   neighborhood: String,
   city: String,
   state: String,
