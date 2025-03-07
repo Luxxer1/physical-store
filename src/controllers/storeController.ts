@@ -101,6 +101,8 @@ export const getNearbyStores = catchAsync(
       }
     }
 
+    // case dont found nearby stores
+
     nearbyStores.sort((a, b) => a.numericDistance - b.numericDistance);
 
     nearbyStores.forEach((store) => {
