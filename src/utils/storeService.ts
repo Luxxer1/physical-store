@@ -3,6 +3,7 @@ import Store from '../models/storeModel';
 import AppError from '../utils/appError';
 
 const MAX_DISTANCE_KM = 100;
+const METERS_IN_KM = 1000;
 
 export const calculateDistance = async (
   origin: string,
@@ -17,7 +18,7 @@ export const calculateDistance = async (
   }
 
   const distance = data.routes[0].legs[0].distance.value;
-  return distance / 1000;
+  return distance / METERS_IN_KM;
 };
 
 export const getNearbyStoresWithDistance = async (

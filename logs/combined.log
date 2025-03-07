@@ -110,3 +110,22 @@
 2025-03-07T19:57:37.665Z [INFO]: Todas as lojas encontradas com sucesso.
 2025-03-07T19:57:48.220Z [INFO]: Buscando lojas próximas ao CEP: 90450017
 2025-03-07T19:57:50.858Z [INFO]: 1 loja encontrada próxima ao CEP: 90450017
+2025-03-07T20:11:53.315Z [INFO]: Server running at port 8000
+2025-03-07T20:11:54.265Z [INFO]: DB connection successful!
+2025-03-07T20:12:14.243Z [INFO]: Buscando todas as lojas...
+2025-03-07T20:12:14.308Z [INFO]: Todas as lojas encontradas com sucesso.
+2025-03-07T20:12:19.833Z [INFO]: Buscando lojas próximas ao CEP: 50930070
+2025-03-07T20:12:21.333Z [INFO]: 3 lojas encontradas próximas ao CEP: 50930070
+2025-03-07T20:12:59.225Z [INFO]: Buscando lojas próximas ao CEP: 50930070
+2025-03-07T20:13:00.804Z [INFO]: 3 lojas encontradas próximas ao CEP: 50930070
+2025-03-07T20:13:10.307Z [INFO]: Buscando lojas próximas ao CEP: 50930070
+2025-03-07T20:13:11.270Z [INFO]: 3 lojas encontradas próximas ao CEP: 50930070
+2025-03-07T20:13:14.695Z [INFO]: Buscando todas as lojas...
+2025-03-07T20:13:14.753Z [INFO]: Todas as lojas encontradas com sucesso.
+2025-03-07T20:15:50.276Z [INFO]: Buscando lojas próximas ao CEP: 91320001
+2025-03-07T20:15:52.609Z [INFO]: 1 loja encontrada próxima ao CEP: 91320001
+2025-03-07T20:17:02.168Z [INFO]: Buscando lojas próximas ao CEP: 04020001
+2025-03-07T20:17:04.574Z [WARN]: [404] Nenhuma loja encontrada próximo ao CEP: 04020001 - GET /stores/04020001
+2025-03-07T20:18:46.377Z [WARN]: [404] CEP não encontrado. - GET /stores/55810000
+2025-03-07T20:20:01.240Z [INFO]: Buscando lojas próximas ao CEP: 69880000
+2025-03-07T20:20:01.515Z [ERROR]: [500] Não foi possível calcular a distância. - GET /stores/69880000
