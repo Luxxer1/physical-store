@@ -9,12 +9,16 @@ const storeModel_1 = __importDefault(require("../models/storeModel"));
 const appError_1 = __importDefault(require("../utils/appError"));
 const catchAsync_1 = require("../utils/catchAsync");
 const logger_1 = __importDefault(require("../utils/logger"));
-const distanceService_1 = require("../utils/distanceService");
-const storeFormatter_1 = require("../utils/storeFormatter");
-const MAX_DISTANCE_KM = 100;
+const storeService_1 = require("../utils/storeService");
+const storeFormatter_1 = __importDefault(require("../utils/storeFormatter"));
+storeFormatter_1.default;
 exports.getAllStores = (0, catchAsync_1.catchAsync)(async (req, res, next) => {
-    const stores = await storeModel_1.default.find();
     logger_1.default.info('Buscando todas as lojas...');
+    const stores = await storeModel_1.default.find();
+    if (stores.length === 0) {
+        return next(new appError_1.default('Nenhuma loja encontrada', 404));
+    }
+    logger_1.default.info('Todas as lojas encontradas com sucesso.');
     res.status(200).json({
         status: 'success',
         data: {
@@ -33,7 +37,7 @@ exports.getNearbyStores = (0, catchAsync_1.catchAsync)(async (req, res, next) =>
     }
     const address = encodeURIComponent(`${cepData.logradouro}, ${cepData.bairro}, ${cepData.localidade}, ${cepData.uf}`);
     if (!process.env.API_KEY) {
-        throw new Error('API KEY is not defined');
+        return next(new appError_1.default('API KEY is not defined', 500));
     }
     const { data: geocodeData } = await axios_1.default.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${process.env.API_KEY}`);
     if (!geocodeData.results || geocodeData.results.length === 0) {
@@ -41,24 +45,18 @@ exports.getNearbyStores = (0, catchAsync_1.catchAsync)(async (req, res, next) =>
     }
     const { lat, lng } = geocodeData.results[0].geometry.location;
     const origin = `${lat},${lng}`;
-    const stores = await storeModel_1.default.find();
-    logger_1.default.info('Buscando lojas próximas...');
-    const nearbyStores = [];
-    for (const store of stores) {
-        if (store.location && store.location.coordinates) {
-            const [storeLng, storeLat] = store.location.coordinates;
-            const destination = `${storeLat},${storeLng}`;
-            const distance = await (0, distanceService_1.calculateDistance)(origin, destination);
-            if (distance <= MAX_DISTANCE_KM) {
-                nearbyStores.push({
-                    ...store.toObject(),
-                    distance: `${distance} km`,
-                    numericDistance: distance,
-                });
-            }
-        }
+    logger_1.default.info(`Buscando lojas próximas ao CEP: ${cep}`);
+    const nearbyStores = await (0, storeService_1.getNearbyStoresWithDistance)(origin);
+    if (nearbyStores.length === 0) {
+        return next(new appError_1.default(`Nenhuma loja encontrada próximo ao CEP: ${cep}`, 404));
     }
-    const formattedStores = (0, storeFormatter_1.formatNearbyStores)(nearbyStores);
+    const formattedStores = new storeFormatter_1.default(nearbyStores).sort().format();
+    if (formattedStores.length === 1) {
+        logger_1.default.info(`1 loja encontrada próxima ao CEP: ${cep}`);
+    }
+    else {
+        logger_1.default.info(`${formattedStores.length} lojas encontradas próximas ao CEP: ${cep}`);
+    }
     res.status(200).json({
         status: 'success',
         data: {

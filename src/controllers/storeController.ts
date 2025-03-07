@@ -4,10 +4,9 @@ import { Request, Response, NextFunction } from 'express';
 import AppError from '../utils/appError';
 import { catchAsync } from '../utils/catchAsync';
 import logger from '../utils/logger';
-import { calculateDistance } from '../utils/calculateDistance';
-import { formatNearbyStores } from '../utils/storeFormatter';
-
-const MAX_DISTANCE_KM = 100;
+import { getNearbyStoresWithDistance } from '../utils/storeService';
+import StoreFormatter from '../utils/storeFormatter';
+StoreFormatter;
 
 interface CepResponse {
   cep: string;
@@ -24,9 +23,15 @@ interface CepResponse {
 
 export const getAllStores = catchAsync(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    logger.info('Buscando todas as lojas...');
+
     const stores = await Store.find();
 
-    logger.info('Buscando todas as lojas...');
+    if (stores.length === 0) {
+      return next(new AppError('Nenhuma loja encontrada', 404));
+    }
+
+    logger.info('Todas as lojas encontradas com sucesso.');
 
     res.status(200).json({
       status: 'success',
@@ -63,7 +68,7 @@ export const getNearbyStores = catchAsync(
     );
 
     if (!process.env.API_KEY) {
-      throw new Error('API KEY is not defined');
+      return next(new AppError('API KEY is not defined', 500));
     }
 
     const { data: geocodeData } = await axios.get(
@@ -79,31 +84,25 @@ export const getNearbyStores = catchAsync(
     const { lat, lng } = geocodeData.results[0].geometry.location;
     const origin = `${lat},${lng}`;
 
-    const stores = await Store.find();
+    logger.info(`Buscando lojas próximas ao CEP: ${cep}`);
 
-    logger.info('Buscando lojas próximas...');
+    const nearbyStores = await getNearbyStoresWithDistance(origin);
 
-    const nearbyStores = [];
-    for (const store of stores) {
-      if (store.location && store.location.coordinates) {
-        const [storeLng, storeLat] = store.location.coordinates;
-        const destination = `${storeLat},${storeLng}`;
-
-        const distance = await calculateDistance(origin, destination);
-
-        if (distance <= MAX_DISTANCE_KM) {
-          nearbyStores.push({
-            ...store.toObject(),
-            distance: `${distance} km`,
-            numericDistance: distance,
-          });
-        }
-      }
+    if (nearbyStores.length === 0) {
+      return next(
+        new AppError(`Nenhuma loja encontrada próximo ao CEP: ${cep}`, 404)
+      );
     }
 
-    // case dont found nearby stores
+    const formattedStores = new StoreFormatter(nearbyStores).sort().format();
 
-    const formattedStores = formatNearbyStores(nearbyStores);
+    if (formattedStores.length === 1) {
+      logger.info(`1 loja encontrada próxima ao CEP: ${cep}`);
+    } else {
+      logger.info(
+        `${formattedStores.length} lojas encontradas próximas ao CEP: ${cep}`
+      );
+    }
 
     res.status(200).json({
       status: 'success',

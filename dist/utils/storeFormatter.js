@@ -1,12 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.formatNearbyStores = void 0;
-const formatNearbyStores = (stores) => {
-    stores.sort((a, b) => a.numericDistance - b.numericDistance);
-    return stores.map((store) => {
-        const { numericDistance, ...formattedStore } = store;
-        return formattedStore;
-    });
-};
-exports.formatNearbyStores = formatNearbyStores;
+class StoreFormatter {
+    stores;
+    constructor(stores) {
+        this.stores = stores;
+    }
+    sort() {
+        this.stores.sort((a, b) => a.numericDistance - b.numericDistance);
+        return this;
+    }
+    format() {
+        return this.stores.map((store) => {
+            const { numericDistance, ...formattedStore } = store;
+            return formattedStore;
+        });
+    }
+}
+exports.default = StoreFormatter;
 //# sourceMappingURL=storeFormatter.js.map
