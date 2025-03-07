@@ -11,7 +11,7 @@ class StoreFormatter {
     }
     format() {
         return this.stores.map((store) => {
-            const { numericDistance, ...formattedStore } = store;
+            const { _id, location, __v, numericDistance, ...formattedStore } = store;
             return formattedStore;
         });
     }

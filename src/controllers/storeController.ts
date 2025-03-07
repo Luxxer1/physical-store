@@ -25,7 +25,7 @@ export const getAllStores = catchAsync(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     logger.info('Buscando todas as lojas...');
 
-    const stores = await Store.find();
+    const stores = await Store.find().lean();
 
     if (stores.length === 0) {
       return next(new AppError('Nenhuma loja encontrada', 404));
@@ -33,10 +33,12 @@ export const getAllStores = catchAsync(
 
     logger.info('Todas as lojas encontradas com sucesso.');
 
+    const formattedStore = new StoreFormatter(stores).format();
+
     res.status(200).json({
       status: 'success',
       data: {
-        stores,
+        stores: formattedStore,
       },
     });
   }

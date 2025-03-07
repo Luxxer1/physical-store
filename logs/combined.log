@@ -161,3 +161,37 @@
 {"level":"info","message":"DB connection successful!","timestamp":"2025-03-07T20:55:24.719Z"}
 {"level":"info","message":"Buscando todas as lojas...","timestamp":"2025-03-07T20:55:29.739Z"}
 {"level":"info","message":"Todas as lojas encontradas com sucesso.","timestamp":"2025-03-07T20:55:29.801Z"}
+{"level":"info","message":"Server running at port 8000","timestamp":"2025-03-07T21:38:57.287Z"}
+{"level":"info","message":"DB connection successful!","timestamp":"2025-03-07T21:38:58.446Z"}
+{"level":"info","message":"Buscando lojas próximas ao CEP: 50930070","timestamp":"2025-03-07T21:39:00.817Z"}
+{"level":"info","message":"3 lojas encontradas próximas ao CEP: 50930070","timestamp":"2025-03-07T21:39:02.417Z"}
+{"level":"info","message":"Server running at port 8000","timestamp":"2025-03-07T21:40:19.619Z"}
+{"level":"info","message":"DB connection successful!","timestamp":"2025-03-07T21:40:20.472Z"}
+{"level":"info","message":"Buscando lojas próximas ao CEP: 50930070","timestamp":"2025-03-07T21:40:26.474Z"}
+{"level":"info","message":"3 lojas encontradas próximas ao CEP: 50930070","timestamp":"2025-03-07T21:40:28.072Z"}
+{"level":"info","message":"Server running at port 8000","timestamp":"2025-03-07T21:41:35.692Z"}
+{"level":"info","message":"DB connection successful!","timestamp":"2025-03-07T21:41:36.507Z"}
+{"level":"info","message":"Buscando lojas próximas ao CEP: 50930070","timestamp":"2025-03-07T21:41:44.631Z"}
+{"level":"info","message":"3 lojas encontradas próximas ao CEP: 50930070","timestamp":"2025-03-07T21:41:46.058Z"}
+{"level":"info","message":"Buscando todas as lojas...","timestamp":"2025-03-07T21:41:51.029Z"}
+{"level":"info","message":"Todas as lojas encontradas com sucesso.","timestamp":"2025-03-07T21:41:51.089Z"}
+{"level":"info","message":"Server running at port 8000","timestamp":"2025-03-07T21:44:20.632Z"}
+{"level":"info","message":"DB connection successful!","timestamp":"2025-03-07T21:44:21.393Z"}
+{"level":"info","message":"Buscando todas as lojas...","timestamp":"2025-03-07T21:44:24.207Z"}
+{"level":"info","message":"Todas as lojas encontradas com sucesso.","timestamp":"2025-03-07T21:44:24.272Z"}
+{"level":"info","message":"Server running at port 8000","timestamp":"2025-03-07T21:44:42.005Z"}
+{"level":"info","message":"DB connection successful!","timestamp":"2025-03-07T21:44:42.698Z"}
+{"level":"info","message":"Buscando todas as lojas...","timestamp":"2025-03-07T21:44:42.779Z"}
+{"level":"info","message":"Todas as lojas encontradas com sucesso.","timestamp":"2025-03-07T21:44:42.844Z"}
+{"level":"info","message":"Server running at port 8000","timestamp":"2025-03-07T21:44:56.667Z"}
+{"level":"info","message":"DB connection successful!","timestamp":"2025-03-07T21:44:57.270Z"}
+{"level":"info","message":"Buscando todas as lojas...","timestamp":"2025-03-07T21:45:12.111Z"}
+{"level":"info","message":"Todas as lojas encontradas com sucesso.","timestamp":"2025-03-07T21:45:12.176Z"}
+{"level":"info","message":"Server running at port 8000","timestamp":"2025-03-07T21:47:41.078Z"}
+{"level":"info","message":"DB connection successful!","timestamp":"2025-03-07T21:47:41.793Z"}
+{"level":"info","message":"Buscando todas as lojas...","timestamp":"2025-03-07T21:47:45.710Z"}
+{"level":"info","message":"Todas as lojas encontradas com sucesso.","timestamp":"2025-03-07T21:47:45.781Z"}
+{"level":"info","message":"Server running at port 8000","timestamp":"2025-03-07T21:48:35.743Z"}
+{"level":"info","message":"DB connection successful!","timestamp":"2025-03-07T21:48:36.451Z"}
+{"level":"info","message":"Buscando todas as lojas...","timestamp":"2025-03-07T21:48:46.411Z"}
+{"level":"info","message":"Todas as lojas encontradas com sucesso.","timestamp":"2025-03-07T21:48:46.475Z"}

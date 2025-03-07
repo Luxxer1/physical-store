@@ -14,20 +14,21 @@ const storeFormatter_1 = __importDefault(require("../utils/storeFormatter"));
 storeFormatter_1.default;
 exports.getAllStores = (0, catchAsync_1.catchAsync)(async (req, res, next) => {
     logger_1.default.info('Buscando todas as lojas...');
-    const stores = await storeModel_1.default.find();
+    const stores = await storeModel_1.default.find().lean();
     if (stores.length === 0) {
         return next(new appError_1.default('Nenhuma loja encontrada', 404));
     }
     logger_1.default.info('Todas as lojas encontradas com sucesso.');
+    const formattedStore = new storeFormatter_1.default(stores).format();
     res.status(200).json({
         status: 'success',
         data: {
-            stores,
+            stores: formattedStore,
         },
     });
 });
 exports.getNearbyStores = (0, catchAsync_1.catchAsync)(async (req, res, next) => {
-    let { cep } = req.params;
+    const { cep } = req.params;
     if (!/^\d{8}$/.test(cep)) {
         return next(new appError_1.default('CEP inválido. O CEP deve ter exatamente 8 dígitos numéricos.', 400));
     }
@@ -37,7 +38,7 @@ exports.getNearbyStores = (0, catchAsync_1.catchAsync)(async (req, res, next) =>
     }
     const address = encodeURIComponent(`${cepData.logradouro}, ${cepData.bairro}, ${cepData.localidade}, ${cepData.uf}`);
     if (!process.env.API_KEY) {
-        return next(new appError_1.default('API KEY is not defined', 500));
+        return next(new appError_1.default('API KEY não definida', 500));
     }
     const { data: geocodeData } = await axios_1.default.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${process.env.API_KEY}`);
     if (!geocodeData.results || geocodeData.results.length === 0) {
