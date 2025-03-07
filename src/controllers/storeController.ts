@@ -4,6 +4,7 @@ import { Request, Response, NextFunction } from 'express';
 import AppError from '../utils/appError';
 import { catchAsync } from '../utils/catchAsync';
 import logger from '../utils/logger';
+import { calculateDistance } from '../utils/distanceService';
 
 interface CepResponse {
   cep: string;
@@ -21,7 +22,9 @@ interface CepResponse {
 export const getAllStores = catchAsync(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const stores = await Store.find();
+
     logger.info('Buscando todas as lojas...');
+
     res.status(200).json({
       status: 'success',
       data: {
@@ -52,8 +55,6 @@ export const getNearbyStores = catchAsync(
       return next(new AppError('CEP não encontrado.', 404));
     }
 
-    console.log(cepData);
-
     const address = encodeURIComponent(`
       ${cepData.logradouro},
       ${cepData.bairro},
@@ -79,6 +80,8 @@ export const getNearbyStores = catchAsync(
     const origin = `${lat},${lng}`;
 
     const stores = await Store.find();
+
+    logger.info('Buscando lojas próximas...');
 
     const nearbyStores = [];
     for (const store of stores) {
@@ -113,19 +116,3 @@ export const getNearbyStores = catchAsync(
     });
   }
 );
-
-const calculateDistance = async (
-  origin: string,
-  destination: string
-): Promise<number> => {
-  const { data } = await axios.get(
-    `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&key=${process.env.API_KEY}`
-  );
-
-  if (data.status !== 'OK' || !data.routes || !data.routes.length) {
-    throw new Error('Não foi possível calcular a distância.');
-  }
-
-  const distance = data.routes[0].legs[0].distance.value;
-  return distance / 1000;
-};

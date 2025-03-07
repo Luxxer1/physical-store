@@ -1,1 +1,24 @@
 2025-03-07T16:02:51.848Z [INFO]: Buscando todas as lojas...
+2025-03-07T16:14:08.620Z [INFO]: Server running at port 8000
+2025-03-07T16:14:09.650Z [INFO]: DB connection successful!
+2025-03-07T16:14:23.143Z [INFO]: Buscando todas as lojas...
+2025-03-07T16:14:32.819Z [WARN]: [400] CEP inválido. O CEP deve ter exatamente 8 dígitos numéricos. - GET /stores/zzx
+2025-03-07T16:14:56.822Z [WARN]: [404] CEP não encontrado. - GET /stores/99999999
+2025-03-07T16:15:28.037Z [ERROR]: [500] Algo deu errado! - GET /stores/69880000
+2025-03-07T16:17:56.807Z [INFO]: Server running at port 8000
+2025-03-07T16:17:57.604Z [INFO]: DB connection successful!
+2025-03-07T16:17:59.417Z [INFO]: Server running at port 8000
+2025-03-07T16:18:00.019Z [INFO]: DB connection successful!
+2025-03-07T16:18:22.821Z [INFO]: Server running at port 8000
+2025-03-07T16:18:23.411Z [INFO]: DB connection successful!
+2025-03-07T16:18:53.386Z [INFO]: Server running at port 8000
+2025-03-07T16:18:53.981Z [INFO]: DB connection successful!
+2025-03-07T16:19:08.978Z [INFO]: Server running at port 8000
+2025-03-07T16:19:09.619Z [INFO]: DB connection successful!
+2025-03-07T16:19:16.588Z [INFO]: Buscando lojas próximas...
+2025-03-07T16:19:22.512Z [INFO]: Buscando lojas próximas...
+2025-03-07T16:19:26.360Z [INFO]: Buscando todas as lojas...
+2025-03-07T16:19:29.426Z [WARN]: [400] CEP inválido. O CEP deve ter exatamente 8 dígitos numéricos. - GET /stores/zz
+2025-03-07T16:24:59.907Z [INFO]: Server running at port 8000
+2025-03-07T16:25:00.736Z [INFO]: DB connection successful!
+2025-03-07T16:25:06.576Z [WARN]: [400] CEP inválido. O CEP deve ter exatamente 8 dígitos numéricos. - GET /stores/zz

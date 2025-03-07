@@ -9,6 +9,7 @@ const storeModel_1 = __importDefault(require("../models/storeModel"));
 const appError_1 = __importDefault(require("../utils/appError"));
 const catchAsync_1 = require("../utils/catchAsync");
 const logger_1 = __importDefault(require("../utils/logger"));
+const distanceService_1 = require("../utils/distanceService");
 exports.getAllStores = (0, catchAsync_1.catchAsync)(async (req, res, next) => {
     const stores = await storeModel_1.default.find();
     logger_1.default.info('Buscando todas as lojas...');
@@ -28,7 +29,6 @@ exports.getNearbyStores = (0, catchAsync_1.catchAsync)(async (req, res, next) =>
     if (cepData.erro) {
         return next(new appError_1.default('CEP não encontrado.', 404));
     }
-    console.log(cepData);
     const address = encodeURIComponent(`
       ${cepData.logradouro},
       ${cepData.bairro},
@@ -45,12 +45,13 @@ exports.getNearbyStores = (0, catchAsync_1.catchAsync)(async (req, res, next) =>
     const { lat, lng } = geocodeData.results[0].geometry.location;
     const origin = `${lat},${lng}`;
     const stores = await storeModel_1.default.find();
+    logger_1.default.info('Buscando lojas próximas...');
     const nearbyStores = [];
     for (const store of stores) {
         if (store.location && store.location.coordinates) {
             const [storeLng, storeLat] = store.location.coordinates;
             const destination = `${storeLat},${storeLng}`;
-            const distance = await calculateDistance(origin, destination);
+            const distance = await (0, distanceService_1.calculateDistance)(origin, destination);
             if (distance <= 100) {
                 nearbyStores.push({
                     ...store.toObject(),
@@ -72,12 +73,4 @@ exports.getNearbyStores = (0, catchAsync_1.catchAsync)(async (req, res, next) =>
         },
     });
 });
-const calculateDistance = async (origin, destination) => {
-    const { data } = await axios_1.default.get(`https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&key=${process.env.API_KEY}`);
-    if (data.status !== 'OK' || !data.routes || !data.routes.length) {
-        throw new Error('Não foi possível calcular a distância.');
-    }
-    const distance = data.routes[0].legs[0].distance.value;
-    return distance / 1000;
-};
 //# sourceMappingURL=storeController.js.map

@@ -1,11 +1,13 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import app from './app.js';
+import AppError from './utils/appError.js';
+import logger from './utils/logger.js';
 
 dotenv.config({ path: './config.env' });
 
 if (!process.env.DATABASE_PASSWORD) {
-  throw new Error('DATABASE_PASSWORD is not defined');
+  throw new AppError('DATABASE_PASSWORD is not defined', 500);
 }
 
 const DB = process.env.DATABASE?.replace(
@@ -14,12 +16,12 @@ const DB = process.env.DATABASE?.replace(
 );
 
 if (!DB) {
-  throw new Error('DATABASE URL is not defined or invalid');
+  throw new AppError('DATABASE URL is not defined or invalid', 500);
 }
 
-mongoose.connect(DB).then(() => console.log('DB connection successful!'));
+mongoose.connect(DB).then(() => logger.info('DB connection successful!'));
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`Server running at port ${port}`);
+  logger.info(`Server running at port ${port}`);
 });

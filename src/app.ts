@@ -2,7 +2,7 @@ import express from 'express';
 import { Request, Response, NextFunction } from 'express';
 import storeRouter from './routes/storeRoutes';
 import AppError from './utils/appError';
-import { globalErrorHandler } from './controllers/errorController';
+import { globalErrorHandler } from './utils/errorHandler';
 
 const app = express();
 
