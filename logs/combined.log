@@ -115,3 +115,14 @@
 {"level":"warn","message":"[404] Não foi possível encontrar /asd no servidor - GET /asd","timestamp":"2025-03-09T18:28:35.856Z"}
 {"level":"info","message":"Buscando todas as lojas...","timestamp":"2025-03-09T18:28:38.924Z"}
 {"level":"info","message":"Todas as lojas encontradas com sucesso.","timestamp":"2025-03-09T18:28:38.983Z"}
+{"level":"info","message":"Server running at port 8000","timestamp":"2025-03-09T19:03:25.182Z"}
+{"level":"info","message":"DB connection successful!","timestamp":"2025-03-09T19:03:26.033Z"}
+{"level":"info","message":"Server running at port 8000","timestamp":"2025-03-09T19:03:29.300Z"}
+{"level":"info","message":"DB connection successful!","timestamp":"2025-03-09T19:03:29.959Z"}
+{"level":"info","message":"Buscando lojas próximas ao CEP: 69880000","timestamp":"2025-03-09T19:03:42.312Z"}
+{"level":"error","message":"[500] Não foi possível calcular a distância. - GET /stores/69880000","timestamp":"2025-03-09T19:03:42.570Z"}
+{"level":"info","message":"Buscando lojas próximas ao CEP: 50930070","timestamp":"2025-03-09T19:03:46.025Z"}
+{"level":"info","message":"3 lojas encontradas próximas ao CEP: 50930070","timestamp":"2025-03-09T19:03:47.837Z"}
+{"level":"info","message":"Buscando todas as lojas...","timestamp":"2025-03-09T19:03:53.755Z"}
+{"level":"info","message":"Todas as lojas encontradas com sucesso.","timestamp":"2025-03-09T19:03:53.812Z"}
+{"level":"warn","message":"[404] Não foi possível encontrar /asd no servidor - GET /asd","timestamp":"2025-03-09T19:03:56.844Z"}
