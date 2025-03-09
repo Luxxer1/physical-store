@@ -19,11 +19,11 @@ exports.getAllStores = (0, catchAsync_1.catchAsync)(async (req, res, next) => {
         return next(new appError_1.default('Nenhuma loja encontrada', 404));
     }
     logger_1.default.info('Todas as lojas encontradas com sucesso.');
-    const formattedStore = new storeFormatter_1.default(stores).format();
+    const formattedStores = new storeFormatter_1.default(stores).format();
     res.status(200).json({
         status: 'success',
         data: {
-            stores: formattedStore,
+            stores: formattedStores,
         },
     });
 });

@@ -63,3 +63,27 @@
 {"level":"info","message":"Buscando lojas próximas ao CEP: 69880000","timestamp":"2025-03-07T21:54:00.364Z"}
 {"level":"error","message":"[500] Não foi possível calcular a distância. - GET /stores/69880000","timestamp":"2025-03-07T21:54:00.667Z"}
 {"level":"warn","message":"[400] CEP inválido. O CEP deve ter exatamente 8 dígitos numéricos. - GET /stores/ZZZ","timestamp":"2025-03-07T21:54:07.674Z"}
+{"level":"info","message":"Server running at port 8000","timestamp":"2025-03-09T18:18:19.984Z"}
+{"level":"info","message":"DB connection successful!","timestamp":"2025-03-09T18:18:20.787Z"}
+{"level":"warn","message":"[400] CEP inválido. O CEP deve ter exatamente 8 dígitos numéricos. - GET /stores/ZZZ","timestamp":"2025-03-09T18:18:22.430Z"}
+{"level":"info","message":"Buscando lojas próximas ao CEP: 69880000","timestamp":"2025-03-09T18:18:26.498Z"}
+{"level":"error","message":"[500] Não foi possível calcular a distância. - GET /stores/69880000","timestamp":"2025-03-09T18:18:26.676Z"}
+{"level":"info","message":"Buscando lojas próximas ao CEP: 91320001","timestamp":"2025-03-09T18:18:31.972Z"}
+{"level":"info","message":"1 loja encontrada próxima ao CEP: 91320001","timestamp":"2025-03-09T18:18:34.449Z"}
+{"level":"info","message":"Buscando lojas próximas ao CEP: 04020001","timestamp":"2025-03-09T18:18:37.590Z"}
+{"level":"warn","message":"[404] Nenhuma loja encontrada próxima ao CEP: 04020001 - GET /stores/04020001","timestamp":"2025-03-09T18:18:39.706Z"}
+{"level":"info","message":"Buscando lojas próximas ao CEP: 04020001","timestamp":"2025-03-09T18:18:44.657Z"}
+{"level":"warn","message":"[404] Nenhuma loja encontrada próxima ao CEP: 04020001 - GET /stores/04020001","timestamp":"2025-03-09T18:18:45.879Z"}
+{"level":"warn","message":"[404] Não foi possível encontrar /asd no servidor - GET /asd","timestamp":"2025-03-09T18:18:50.630Z"}
+{"level":"warn","message":"[400] CEP inválido. O CEP deve ter exatamente 8 dígitos numéricos. - GET /stores/ZZZ","timestamp":"2025-03-09T18:18:57.277Z"}
+{"level":"warn","message":"[404] CEP não encontrado. - GET /stores/99999999","timestamp":"2025-03-09T18:19:05.404Z"}
+{"level":"warn","message":"[404] CEP não encontrado. - GET /stores/99999999","timestamp":"2025-03-09T18:19:59.881Z"}
+{"level":"warn","message":"[404] CEP não encontrado. - GET /stores/99999999","timestamp":"2025-03-09T18:20:21.817Z"}
+{"level":"info","message":"Buscando lojas próximas ao CEP: 50930070","timestamp":"2025-03-09T18:21:19.641Z"}
+{"level":"info","message":"3 lojas encontradas próximas ao CEP: 50930070","timestamp":"2025-03-09T18:21:20.967Z"}
+{"level":"info","message":"Buscando lojas próximas ao CEP: 50790070","timestamp":"2025-03-09T18:21:45.315Z"}
+{"level":"info","message":"3 lojas encontradas próximas ao CEP: 50790070","timestamp":"2025-03-09T18:21:46.833Z"}
+{"level":"info","message":"Buscando lojas próximas ao CEP: 50930070","timestamp":"2025-03-09T18:21:51.899Z"}
+{"level":"info","message":"3 lojas encontradas próximas ao CEP: 50930070","timestamp":"2025-03-09T18:21:53.133Z"}
+{"level":"info","message":"Buscando lojas próximas ao CEP: 50930070","timestamp":"2025-03-09T18:21:58.675Z"}
+{"level":"info","message":"3 lojas encontradas próximas ao CEP: 50930070","timestamp":"2025-03-09T18:21:59.835Z"}
