@@ -41,7 +41,7 @@ Busca lojas próximas a um CEP fornecido. Para isso, utiliza a API do ViaCEP par
 
 ### Pré-requisitos
 
-Certifique-se de ter o **Node.js** e o **MongoDB** instalados em seu sistema. Caso ainda não tenha, siga os passos abaixo para configurar o projeto.
+Certifique-se de ter o **Node.js** e o **MongoDB** instalados em seu sistema. Caso já tenha instalado, siga os próximos passos para configurar o projeto.
 
 1. Clone este repositório:
 
