@@ -22,6 +22,7 @@ exports.getAllStores = (0, catchAsync_1.catchAsync)(async (req, res, next) => {
     const formattedStores = new storeFormatter_1.default(stores).format();
     res.status(200).json({
         status: 'success',
+        length: formattedStores.length,
         data: {
             stores: formattedStores,
         },
@@ -60,6 +61,7 @@ exports.getNearbyStores = (0, catchAsync_1.catchAsync)(async (req, res, next) =>
     }
     res.status(200).json({
         status: 'success',
+        length: formattedStores.length,
         data: {
             stores: formattedStores,
         },

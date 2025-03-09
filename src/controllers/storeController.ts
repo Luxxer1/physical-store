@@ -37,6 +37,7 @@ export const getAllStores = catchAsync(
 
     res.status(200).json({
       status: 'success',
+      length: formattedStores.length,
       data: {
         stores: formattedStores,
       },
@@ -108,6 +109,7 @@ export const getNearbyStores = catchAsync(
 
     res.status(200).json({
       status: 'success',
+      length: formattedStores.length,
       data: {
         stores: formattedStores,
       },
