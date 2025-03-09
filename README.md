@@ -77,7 +77,7 @@ Para rodar o servidor localmente, execute o comando:
 npm start
 ```
 
-O servidor estará disponível em http://localhost:8000.
+O servidor estará disponível em http://localhost:3000.
 
 ### Testes
 
