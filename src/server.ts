@@ -19,7 +19,13 @@ if (!DB) {
   throw new AppError('DATABASE URL is not defined or invalid', 500);
 }
 
-mongoose.connect(DB).then(() => logger.info('DB connection successful!'));
+mongoose
+  .connect(DB)
+  .then(() => logger.info('DB connection successful!'))
+  .catch((err) => {
+    logger.error(`Erro ao conectar ao banco de dados: ${err.message}`);
+    process.exit(1);
+  });
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
