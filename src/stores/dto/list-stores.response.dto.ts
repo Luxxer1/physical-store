@@ -1,7 +1,7 @@
-import { StoreEntity } from '../entities/store.entity';
+import { Store } from '../schema/store.schema';
 
 export class ListAllResponseDto {
-  stores: StoreEntity[];
+  stores: Store[];
   limit: number;
   offset: number;
   total: number;

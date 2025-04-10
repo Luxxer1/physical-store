@@ -1,5 +1,5 @@
-import { StoreEntity } from '../entities/store.entity';
+import { Store } from '../schema/store.schema';
 
 export class StoreByIdResponseDto {
-  store: StoreEntity;
+  store: Store;
 }

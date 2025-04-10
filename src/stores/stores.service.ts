@@ -1,50 +1,30 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Store, StoreDocument } from './schema/store.schema';
 import { ListAllResponseDto } from './dto/list-stores.response.dto';
-import { StoreByCepResponseDto } from './dto/store-by-cep.response.dto';
-import { StoreByIdResponseDto } from './dto/store-by-id.response.dto';
-import { StoreByStateResponseDto } from './dto/store-by-state.response.dto';
 
 @Injectable()
 export class StoresService {
-  listAll(limit: number, offset: number): Promise<ListAllResponseDto> {
-    // TODO: Implementar a lógica de listagem de todas as stores
-    return {
-      stores: [],
-      limit,
-      offset,
-      total: 0,
-    };
-  }
+  constructor(
+    @InjectModel(Store.name)
+    private readonly storeModel: Model<StoreDocument>,
+  ) {}
 
-  async storeByCep(cep: string): Promise<StoreByCepResponseDto> {
-    // TODO: Implementar a lógica para retornar stores e pins a partir do CEP
-    return {
-      stores: [],
-      pins: [],
-      limit: 0,
-      offset: 0,
-      total: 0,
-    };
-  }
+  async listAll(limit: number, offset: number): Promise<ListAllResponseDto> {
+    const take = Number(limit) || 10;
+    const skip = Number(offset) || 0;
 
-  async storeById(id: string): Promise<StoreByIdResponseDto> {
-    // TODO: Implementar a lógica para retornar uma store específica pelo ID
-    return {
-      store: null,
-    };
-  }
+    const [stores, total] = await Promise.all([
+      this.storeModel.find().skip(skip).limit(take).exec(),
+      this.storeModel.countDocuments().exec(),
+    ]);
 
-  async storeByState(
-    state: string,
-    limit: number,
-    offset: number,
-  ): Promise<StoreByStateResponseDto> {
-    // TODO: Implementar a lógica para retornar stores por estado
     return {
-      stores: [],
-      limit,
-      offset,
-      total: 0,
+      stores,
+      limit: take,
+      offset: skip,
+      total,
     };
   }
 }
