@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { FastifyRequest, FastifyReply } from 'fastify';
-import logger from './logger';
+import logger from 'src/common/logger/logger';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
@@ -9,9 +9,7 @@ export class LoggerMiddleware implements NestMiddleware {
 
     res.on('finish', () => {
       const duration = Date.now() - start;
-      logger.info(
-        `[${res.statusCode}] ${req.method} ${req.url} - ${duration}ms`,
-      );
+      logger.info(`${req.method} ${req.url} ${res.statusCode} - ${duration}ms`);
     });
 
     next();
