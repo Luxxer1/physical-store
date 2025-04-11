@@ -25,7 +25,6 @@
     "@nestjs/core": "^11.0.16",
     "@nestjs/mapped-types": "*",
     "@nestjs/mongoose": "^11.0.3",
-    "@nestjs/platform-express": "^11.0.1",
     "@nestjs/platform-fastify": "^11.0.13",
     "mongoose": "^8.13.2",
     "reflect-metadata": "^0.2.2",
