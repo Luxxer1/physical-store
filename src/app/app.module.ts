@@ -3,9 +3,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LoggerMiddleware } from 'src/common/logger/logger.middleware';
 import { StoreController } from 'src/store/store.controller';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+  ],
   controllers: [AppController, StoreController],
   providers: [AppService],
 })
