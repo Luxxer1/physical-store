@@ -19,13 +19,13 @@ export class StoreController {
     };
   }
 
-  @Get(':cep')
-  async getNearbyStores(@Param('cep') cep: string) {
-    const stores = await this.storeService.getNearbyStores(cep);
-    return {
-      status: 'success',
-      length: stores.length,
-      data: { stores },
-    };
-  }
+  // @Get(':cep')
+  // async getNearbyStores(@Param('cep') cep: string) {
+  //   const stores = await this.storeService.getNearbyStores(cep);
+  //   return {
+  //     status: 'success',
+  //     length: stores.length,
+  //     data: { stores },
+  //   };
+  // }
 }

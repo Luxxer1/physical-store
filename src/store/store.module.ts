@@ -3,6 +3,8 @@ import { StoreController } from './store.controller';
 import { StoreService } from './store.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
+import { Store, StoreSchema } from './store.model';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -12,6 +14,8 @@ import { ConfigService } from '@nestjs/config';
         uri: config.get<string>('database.uri'),
       }),
     }),
+    MongooseModule.forFeature([{ name: Store.name, schema: StoreSchema }]),
+    HttpModule,
   ],
   controllers: [StoreController],
   providers: [StoreService],
