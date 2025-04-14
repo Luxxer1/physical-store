@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import logger from 'src/common/logger/logger';
 
 @Injectable()
 export class StoreService {
-  constructor (
-    @InjectModel(Store.name) private storeModel: Model<StoreDocument> {}
-  )
-  async findAll() {
+  private readonly MAX_DISTANCE_KM = 100;
+  private readonly METERS_IN_KM = 1000;
+
+  async getAllStores() {
+    logger.info('Buscando todas as lojas...');
+
+    const stores = await this.storeModel.find().lean();
+
     return this.storeModel.find().lean();
   }
 }
