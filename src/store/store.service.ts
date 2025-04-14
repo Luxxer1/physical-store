@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Store, StoreDocument } from './store.model';
+import { HttpService } from '@nestjs/axios';
 import logger from 'src/common/logger/logger';
 
 @Injectable()
@@ -18,6 +19,9 @@ export class StoreService {
     logger.info('Buscando todas as lojas...');
 
     const stores = await this.storeModel.find().lean();
+    if (stores.length === 0) {
+      throw new HttpException('Nenhuma loja encontrada', HttpStatus.NOT_FOUND);
+    }
 
     return this.storeModel.find().lean();
   }
