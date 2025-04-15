@@ -19,13 +19,14 @@ export class StoreController {
     };
   }
 
-  // @Get(':cep')
-  // async getNearbyStores(@Param('cep') cep: string) {
-  //   const stores = await this.storeService.getNearbyStores(cep);
-  //   return {
-  //     status: 'success',
-  //     length: stores.length,
-  //     data: { stores },
-  //   };
-  // }
+  @Get('/nearby/:cep')
+  async getNearbyStores(@Param('cep') cep: string) {
+    logger.info(`Busca de lojas próximas para o CEP: ${cep}`);
+    const stores = await this.storeService.getNearbyStores(cep);
+    return {
+      status: 'success',
+      length: stores.length,
+      data: { stores },
+    };
+  }
 }
