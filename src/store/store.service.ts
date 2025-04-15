@@ -34,6 +34,30 @@ export class StoreService {
     return stores;
   }
 
+  async getStoreById(id: string): Promise<Store> {
+    const store = await this.storeModel.findById(id).lean().exec();
+    if (!store) {
+      throw new HttpException('Loja não encontrada', HttpStatus.NOT_FOUND);
+    }
+    return store;
+  }
+
+  async getStoresByState(state: string): Promise<Store[]> {
+    const capitalizedState = this.toCapitalize(state);
+
+    const stores = await this.storeModel
+      .find({ state: capitalizedState })
+      .lean()
+      .exec();
+    if (!stores || stores.length === 0) {
+      throw new HttpException(
+        'Nenhuma loja encontrada para o estado informado',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return stores;
+  }
+
   async getNearbyStores(cep: string): Promise<FormattedStore[]> {
     this.validateApiKey();
     this.validateCepFormat(cep);
@@ -202,5 +226,9 @@ export class StoreService {
       businessHour: store.businessHour,
       distance: store.distance,
     }));
+  }
+
+  private toCapitalize(str: string): string {
+    return str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
   }
 }
