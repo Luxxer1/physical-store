@@ -11,7 +11,7 @@ import logger from '../logger/logger';
 
 @Catch(HttpException, AppError, Error)
 export class GlobalExceptionFilter implements ExceptionFilter {
-  catch(exception: any, host: ArgumentsHost) {
+  catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const req = ctx.getRequest<FastifyRequest>();
     const res = ctx.getResponse<FastifyReply>();
@@ -21,9 +21,20 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     if (exception instanceof HttpException) {
       statusCode = exception.getStatus();
+
       const resBody = exception.getResponse();
-      message =
-        typeof resBody === 'string' ? resBody : (resBody as any).message;
+      if (typeof resBody === 'string') {
+        message = resBody;
+      } else if (
+        typeof resBody === 'object' &&
+        resBody !== null &&
+        'message' in resBody
+      ) {
+        const msg = (resBody as Record<string, unknown>).message;
+        if (typeof msg === 'string') {
+          message = msg;
+        }
+      }
     } else if (exception instanceof AppError) {
       statusCode = exception.statusCode;
       message = exception.message;
@@ -31,11 +42,11 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       message = exception.message;
     }
 
-    const logMethod = statusCode >= 500 ? logger.error : logger.warn;
+    const logMethod = Number(statusCode) >= 500 ? logger.error : logger.warn;
     logMethod(`[${statusCode}] ${message} - ${req.method} ${req.url}`);
 
     res.status(statusCode).send({
-      status: statusCode >= 500 ? 'error' : 'fail',
+      status: Number(statusCode) >= 500 ? 'error' : 'fail',
       message,
     });
   }
