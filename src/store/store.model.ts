@@ -33,6 +33,9 @@ export class Store {
   @Prop()
   businessHour: string;
 
+  @Prop({ required: true, enum: ['PDV', 'LOJA'], default: 'LOJA' })
+  type: string;
+
   @Prop({
     type: {
       type: String,
