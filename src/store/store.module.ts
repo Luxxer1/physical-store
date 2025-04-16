@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { Store, StoreSchema } from './store.model';
 import { HttpModule } from '@nestjs/axios';
 import { ViaCepService } from 'src/common/services/via-cep.service';
+import { GoogleMapsService } from 'src/common/services/google-maps.service';
 
 @Module({
   imports: [
@@ -19,6 +20,6 @@ import { ViaCepService } from 'src/common/services/via-cep.service';
     HttpModule,
   ],
   controllers: [StoreController],
-  providers: [StoreService, ViaCepService],
+  providers: [StoreService, ViaCepService, GoogleMapsService],
 })
 export class StoreModule {}

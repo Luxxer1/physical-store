@@ -8,11 +8,11 @@ import { firstValueFrom } from 'rxjs';
 import { ViaCepResponse } from 'src/common/interfaces/viaCep.interface';
 import { FormattedStore } from 'src/common/interfaces/formattedStore.interface';
 import { GoogleGeocodeResponse } from 'src/common/interfaces/googleGeocode.interface';
-import { GoogleDirectionsResponse } from 'src/common/interfaces/googleDirections.interface';
 import { MelhorEnvioResponse } from 'src/common/interfaces/melhor-envio-response.interface';
 import { ShippingResult } from 'src/common/interfaces/shipping-result.interface';
 import { StoreByCepResponse } from 'src/common/interfaces/store-by-cep-response.interface';
 import { ViaCepService } from 'src/common/services/via-cep.service';
+import { GoogleMapsService } from 'src/common/services/google-maps.service';
 
 type StoreWithDistance = Store & {
   distance: string;
@@ -22,12 +22,12 @@ type StoreWithDistance = Store & {
 @Injectable()
 export class StoreService {
   private readonly MAX_DISTANCE_KM = 100;
-  private readonly METERS_IN_KM = 1000;
 
   constructor(
     @InjectModel(Store.name) private readonly storeModel: Model<StoreDocument>,
     private readonly httpService: HttpService,
     private viaCep: ViaCepService,
+    private googleMapsService: GoogleMapsService,
   ) {}
 
   async getAllStores(): Promise<Store[]> {
@@ -147,31 +147,11 @@ export class StoreService {
     origin: string,
     destination: string,
   ): Promise<number> {
-    const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&key=${process.env.API_KEY}`;
-    try {
-      const response = await firstValueFrom(
-        this.httpService.get<GoogleDirectionsResponse>(url),
-      );
-      const data = response.data;
-      if (data.status !== 'OK' || !data.routes?.length) {
-        throw new HttpException(
-          'Não foi possível calcular a distância.',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-      const distanceMeters = data.routes[0].legs[0].distance.value;
-      return distanceMeters / this.METERS_IN_KM;
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        logger.error(`Erro ao calcular distância: ${error.message}`);
-      } else {
-        logger.error('Erro desconhecido ao calcular distância.');
-      }
-      throw new HttpException(
-        'Erro ao calcular a distância.',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+    return this.googleMapsService.getDistance(
+      origin,
+      destination,
+      process.env.API_KEY!,
+    );
   }
 
   private async getNearbyStoresWithDistance(
