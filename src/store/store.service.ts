@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -12,6 +9,9 @@ import { ViaCepResponse } from 'src/common/interfaces/viaCep.interface';
 import { FormattedStore } from 'src/common/interfaces/formattedStore.interface';
 import { GoogleGeocodeResponse } from 'src/common/interfaces/googleGeocode.interface';
 import { GoogleDirectionsResponse } from 'src/common/interfaces/googleDirections.interface';
+import { MelhorEnvioResponse } from 'src/common/interfaces/melhor-envio-response.interface';
+import { ShippingResult } from 'src/common/interfaces/shipping-result.interface';
+import { StoreByCepResponse } from 'src/common/interfaces/store-by-cep-response.interface';
 
 type StoreWithDistance = Store & {
   distance: string;
@@ -236,7 +236,7 @@ export class StoreService {
   private async calculateShippingOptions(
     userCep: string,
     closestStore: StoreWithDistance,
-  ): Promise<any> {
+  ): Promise<ShippingResult> {
     if (closestStore.numericDistance <= 50) {
       return {
         type: 'PDV',
@@ -277,7 +277,7 @@ export class StoreService {
           'User-Agent': 'PhysycalStore lucas.figueiredo.pb@compasso.com.br',
         };
         const { data: apiOptions } = await firstValueFrom(
-          this.httpService.post(url, payload, { headers }),
+          this.httpService.post<MelhorEnvioResponse>(url, payload, { headers }),
         );
 
         logger.info('Chamando a API do Melhor Envio...');
@@ -285,7 +285,7 @@ export class StoreService {
         logger.info('Resposta recebida do Melhor Envio!');
 
         const transformedOptions = Array.isArray(apiOptions)
-          ? apiOptions.map((opt: any) => ({
+          ? apiOptions.map((opt: MelhorEnvioResponse) => ({
               prazo: `${opt.delivery_time} dias úteis`,
               price: `R$ ${parseFloat(opt.custom_price).toFixed(2)}`,
               description: opt.name,
@@ -308,7 +308,7 @@ export class StoreService {
     }
   }
 
-  async getStoreByCep(cep: string): Promise<any> {
+  async getStoreByCep(cep: string): Promise<StoreByCepResponse> {
     this.validateApiKey();
     this.validateCepFormat(cep);
 
@@ -333,7 +333,6 @@ export class StoreService {
     const sortedStores = this.sortStores(nearbyStores);
     const closestStore = sortedStores[0];
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const shipping = await this.calculateShippingOptions(cep, closestStore);
 
     const storeResponse = {

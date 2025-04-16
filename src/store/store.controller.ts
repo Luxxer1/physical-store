@@ -19,31 +19,14 @@ export class StoreController {
     };
   }
 
-  // Excluir
-  @Get('/nearby/:cep')
-  async getNearbyStores(@Param('cep') cep: string) {
-    logger.info(`Busca de lojas próximas para o CEP: ${cep}`);
-
-    const stores = await this.storeService.getNearbyStores(cep);
-
-    return {
-      status: 'success',
-
-      length: stores.length,
-
-      data: { stores },
-    };
-  }
-  // Até aqui
-
   @Get('/cep/:cep')
   async storeByCep(@Param('cep') cep: string) {
     logger.info(`Buscando loja e frete para o CEP: ${cep}`);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
     const result = await this.storeService.getStoreByCep(cep);
+
     return {
       status: 'success',
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       data: result,
     };
   }
@@ -68,15 +51,4 @@ export class StoreController {
       data: { stores },
     };
   }
-
-  // @Get('/cep/:cep')
-  // async storeByCep(@Param('cep') cep: string) {
-  //   logger.info(`Busca de lojas para o CEP: ${cep}`);
-  //   // Esse método retorna um objeto contendo:
-  //   // - stores: array com as lojas com tipos PDV ou LOJA e seus valores
-  //   // - pins: array com os pins para o maps
-  //   // - dados de paginação (limit, offset, total)
-  //   const response = await this.storeService.getStoresByCep(cep);
-  //   return response;
-  // }
 }
