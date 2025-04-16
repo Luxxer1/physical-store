@@ -197,13 +197,11 @@ export class StoreService {
         const destination = `${storeLat},${storeLng}`;
         const distance = await this.calculateDistance(origin, destination);
 
-        if (distance <= this.MAX_DISTANCE_KM) {
-          nearbyStores.push({
-            ...store,
-            distance: `${distance} km`,
-            numericDistance: distance,
-          });
-        }
+        nearbyStores.push({
+          ...store,
+          distance: `${distance} km`,
+          numericDistance: distance,
+        });
       }
     }
     return nearbyStores;
@@ -230,5 +228,120 @@ export class StoreService {
 
   private toCapitalize(str: string): string {
     return str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+  }
+
+  private async calculateShippingOptions(
+    userCep: string,
+    closestStore: StoreWithDistance,
+  ): Promise<any> {
+    if (closestStore.numericDistance <= 50) {
+      return {
+        type: 'LOJA',
+        options: [
+          {
+            prazo: '1 dia útil',
+            price: 'R$ 15,00',
+            description: 'Frete fixo',
+          },
+        ],
+      };
+    } else {
+      if (!process.env.MELHOR_ENVIO_TOKEN) {
+        throw new HttpException(
+          'Token do Melhor Envio não definido',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      const url = 'https://www.melhorenvio.com.br/api/v2/me/shipment/calculate';
+      const payload = {
+        from: { postal_code: closestStore.zipCode },
+        to: { postal_code: userCep },
+        package: {
+          height: 4,
+          width: 12,
+          length: 17,
+          weight: 0.3,
+        },
+        services: '1,2',
+      };
+
+      try {
+        const headers = {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.MELHOR_ENVIO_TOKEN}`,
+          'User-Agent': 'PhysycalStore lucas.figueiredo.pb@compasso.com.br',
+        };
+        const response = await firstValueFrom(
+          this.httpService.post(url, payload, { headers }),
+        );
+
+        logger.info('Chamando a API do Melhor Envio...');
+
+        logger.info('Resposta recebida do Melhor Envio!');
+        logger.info(JSON.stringify(response.data, null, 2));
+
+        return {
+          type: 'LOJA',
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+          options: (response as any).data,
+        };
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          logger.error(`Erro na integração com Melhor Envio: ${error.message}`);
+        }
+        throw new HttpException(
+          'Erro ao calcular frete com a API do Melhor Envio',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
+
+  async getStoreByCep(cep: string): Promise<any> {
+    this.validateApiKey();
+    this.validateCepFormat(cep);
+
+    const cepData = await this.fetchCepData(cep);
+    if (cepData.erro) {
+      throw new HttpException('CEP não encontrado.', HttpStatus.NOT_FOUND);
+    }
+
+    const { lat, lng } = await this.getCoordinatesFromAddress(cepData);
+    const origin = `${lat},${lng}`;
+
+    logger.info(`Buscando lojas próximas ao CEP: ${cep}`);
+    const nearbyStores = await this.getNearbyStoresWithDistance(origin);
+
+    if (nearbyStores.length === 0) {
+      throw new HttpException(
+        `Nenhuma loja encontrada próxima ao CEP: ${cep}`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const sortedStores = this.sortStores(nearbyStores);
+    const closestStore = sortedStores[0];
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const shipping = await this.calculateShippingOptions(cep, closestStore);
+
+    return {
+      store: {
+        storeName: closestStore.storeName,
+        zipCode: closestStore.zipCode,
+        address: closestStore.address,
+        number: closestStore.number,
+        neighborhood: closestStore.neighborhood,
+        city: closestStore.city,
+        state: closestStore.state,
+        phoneNumber: closestStore.phoneNumber,
+        businessHour: closestStore.businessHour,
+        distance: closestStore.distance,
+      },
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      shipping,
+    };
   }
 }

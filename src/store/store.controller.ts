@@ -19,6 +19,35 @@ export class StoreController {
     };
   }
 
+  // Excluir
+  @Get('/nearby/:cep')
+  async getNearbyStores(@Param('cep') cep: string) {
+    logger.info(`Busca de lojas próximas para o CEP: ${cep}`);
+
+    const stores = await this.storeService.getNearbyStores(cep);
+
+    return {
+      status: 'success',
+
+      length: stores.length,
+
+      data: { stores },
+    };
+  }
+  // Até aqui
+
+  @Get('/cep/:cep')
+  async storeByCep(@Param('cep') cep: string) {
+    logger.info(`Buscando loja e frete para o CEP: ${cep}`);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const result = await this.storeService.getStoreByCep(cep);
+    return {
+      status: 'success',
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      data: result,
+    };
+  }
+
   @Get('/id/:id')
   async storeById(@Param('id') id: string) {
     logger.info(`Buscando loja com ID: ${id}`);
