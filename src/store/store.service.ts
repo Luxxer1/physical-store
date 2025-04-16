@@ -23,13 +23,25 @@ type StoreWithDistance = Store & {
 
 @Injectable()
 export class StoreService {
+  private readonly apiKey: string;
+
   constructor(
     @InjectModel(Store.name) private readonly storeModel: Model<StoreDocument>,
     private readonly config: ConfigService,
     private readonly viaCep: ViaCepService,
     private readonly googleMapsService: GoogleMapsService,
     private readonly melhorEnvioService: MelhorEnvioService,
-  ) {}
+  ) {
+    const token = this.config.get<string>('GOOGLE_API_KEY');
+    if (!token) {
+      logger.error('GOOGLE_API_KEY não está definida');
+      throw new HttpException(
+        'GOOGLE_API_KEY não está definida',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+    this.apiKey = token;
+  }
 
   async listAllStores(): Promise<Store[]> {
     logger.info('Buscando todas as lojas');
@@ -97,18 +109,14 @@ export class StoreService {
   }
 
   private async geocodeAddress(address: string): Promise<Coordinates> {
-    return this.googleMapsService.geocode(address, this.getApiKey());
+    return this.googleMapsService.geocode(address, this.apiKey);
   }
 
   private async calculateDistance(
     origin: string,
     destination: string,
   ): Promise<number> {
-    return this.googleMapsService.getDistance(
-      origin,
-      destination,
-      this.getApiKey(),
-    );
+    return this.googleMapsService.getDistance(origin, destination, this.apiKey);
   }
 
   private async calculateStoresDistance(
@@ -203,17 +211,5 @@ export class StoreService {
       };
     }
     return this.melhorEnvioService.calculate(store.zipCode, toCep);
-  }
-
-  private getApiKey(): string {
-    const key = this.config.get<string>('API_KEY');
-    if (!key) {
-      logger.error('API_KEY não definida');
-      throw new HttpException(
-        'API_KEY não definida',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-    return key;
   }
 }
