@@ -7,16 +7,17 @@ import {
   ShippingOption,
 } from '../interfaces/shipping-result.interface';
 import logger from '../logger/logger';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class MelhorEnvioService {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly configService: ConfigService,
+  ) {}
 
-  async calculate(
-    fromCep: string,
-    toCep: string,
-    token: string,
-  ): Promise<ShippingResult> {
+  async calculate(fromCep: string, toCep: string): Promise<ShippingResult> {
+    const token = this.configService.get<string>('MELHOR_ENVIO_TOKEN');
     if (!token) {
       throw new HttpException(
         'Token do Melhor Envio não definido',
@@ -42,6 +43,11 @@ export class MelhorEnvioService {
       const { data } = await firstValueFrom(
         this.httpService.post<MelhorEnvioResponse[]>(url, payload, { headers }),
       );
+
+      logger.info('Chamando a API do Melhor Envio...');
+      logger.info(JSON.stringify(data, null, 2));
+      logger.info('Resposta recebida do Melhor Envio!');
+
       const transformed: ShippingOption[] = Array.isArray(data)
         ? data.map((opt) => ({
             prazo: `${opt.delivery_time} dias úteis`,

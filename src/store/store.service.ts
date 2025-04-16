@@ -4,14 +4,13 @@ import { Model } from 'mongoose';
 import { Store, StoreDocument } from './store.model';
 import { HttpService } from '@nestjs/axios';
 import logger from 'src/common/logger/logger';
-import { firstValueFrom } from 'rxjs';
 import { ViaCepResponse } from 'src/common/interfaces/viaCep.interface';
 import { FormattedStore } from 'src/common/interfaces/formattedStore.interface';
-import { MelhorEnvioResponse } from 'src/common/interfaces/melhor-envio-response.interface';
 import { ShippingResult } from 'src/common/interfaces/shipping-result.interface';
 import { StoreByCepResponse } from 'src/common/interfaces/store-by-cep-response.interface';
 import { ViaCepService } from 'src/common/services/via-cep.service';
 import { GoogleMapsService } from 'src/common/services/google-maps.service';
+import { MelhorEnvioService } from 'src/common/services/melhor-envio.service';
 
 type StoreWithDistance = Store & {
   distance: string;
@@ -27,6 +26,7 @@ export class StoreService {
     private readonly httpService: HttpService,
     private viaCep: ViaCepService,
     private googleMapsService: GoogleMapsService,
+    private melhorEnvioService: MelhorEnvioService,
   ) {}
 
   async getAllStores(): Promise<Store[]> {
@@ -217,62 +217,14 @@ export class StoreService {
         ],
       };
     } else {
-      if (!process.env.MELHOR_ENVIO_TOKEN) {
-        throw new HttpException(
-          'Token do Melhor Envio não definido',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+      // if (!token) {
+      //   throw new HttpException(
+      //     'Token do Melhor Envio não definido',
+      //     HttpStatus.INTERNAL_SERVER_ERROR,
+      //   );
+      // }
 
-      const url = 'https://www.melhorenvio.com.br/api/v2/me/shipment/calculate';
-      const payload = {
-        from: { postal_code: closestStore.zipCode },
-        to: { postal_code: userCep },
-        package: {
-          height: 4,
-          width: 12,
-          length: 17,
-          weight: 0.3,
-        },
-        services: '1,2',
-      };
-
-      try {
-        const headers = {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.MELHOR_ENVIO_TOKEN}`,
-          'User-Agent': 'PhysycalStore lucas.figueiredo.pb@compasso.com.br',
-        };
-        const { data: apiOptions } = await firstValueFrom(
-          this.httpService.post<MelhorEnvioResponse>(url, payload, { headers }),
-        );
-
-        logger.info('Chamando a API do Melhor Envio...');
-        logger.info(JSON.stringify(apiOptions, null, 2));
-        logger.info('Resposta recebida do Melhor Envio!');
-
-        const transformedOptions = Array.isArray(apiOptions)
-          ? apiOptions.map((opt: MelhorEnvioResponse) => ({
-              prazo: `${opt.delivery_time} dias úteis`,
-              price: `R$ ${parseFloat(opt.custom_price).toFixed(2)}`,
-              description: opt.name,
-            }))
-          : [];
-
-        return {
-          type: 'LOJA',
-          value: transformedOptions,
-        };
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          logger.error(`Erro na integração com Melhor Envio: ${error.message}`);
-        }
-        throw new HttpException(
-          'Erro ao calcular frete com a API do Melhor Envio',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+      return this.melhorEnvioService.calculate(closestStore.zipCode, userCep);
     }
   }
 
