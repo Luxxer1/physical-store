@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -236,12 +239,12 @@ export class StoreService {
   ): Promise<any> {
     if (closestStore.numericDistance <= 50) {
       return {
-        type: 'LOJA',
-        options: [
+        type: 'PDV',
+        value: [
           {
-            prazo: '1 dia útil',
+            prazo: '1 dias úteis',
             price: 'R$ 15,00',
-            description: 'Frete fixo',
+            description: 'Motoboy',
           },
         ],
       };
@@ -273,19 +276,25 @@ export class StoreService {
           Authorization: `Bearer ${process.env.MELHOR_ENVIO_TOKEN}`,
           'User-Agent': 'PhysycalStore lucas.figueiredo.pb@compasso.com.br',
         };
-        const response = await firstValueFrom(
+        const { data: apiOptions } = await firstValueFrom(
           this.httpService.post(url, payload, { headers }),
         );
 
         logger.info('Chamando a API do Melhor Envio...');
-
+        logger.info(JSON.stringify(apiOptions, null, 2));
         logger.info('Resposta recebida do Melhor Envio!');
-        logger.info(JSON.stringify(response.data, null, 2));
+
+        const transformedOptions = Array.isArray(apiOptions)
+          ? apiOptions.map((opt: any) => ({
+              prazo: `${opt.delivery_time} dias úteis`,
+              price: `R$ ${parseFloat(opt.custom_price).toFixed(2)}`,
+              description: opt.name,
+            }))
+          : [];
 
         return {
           type: 'LOJA',
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-          options: (response as any).data,
+          value: transformedOptions,
         };
       } catch (error: unknown) {
         if (error instanceof Error) {
@@ -327,21 +336,29 @@ export class StoreService {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const shipping = await this.calculateShippingOptions(cep, closestStore);
 
-    return {
-      store: {
-        storeName: closestStore.storeName,
-        zipCode: closestStore.zipCode,
-        address: closestStore.address,
-        number: closestStore.number,
-        neighborhood: closestStore.neighborhood,
-        city: closestStore.city,
-        state: closestStore.state,
-        phoneNumber: closestStore.phoneNumber,
-        businessHour: closestStore.businessHour,
-        distance: closestStore.distance,
+    const storeResponse = {
+      name: closestStore.storeName,
+      city: closestStore.city,
+      postalCode: closestStore.zipCode,
+      type: shipping.type,
+      distance: closestStore.distance,
+      value: shipping.value,
+    };
+
+    const pin = {
+      position: {
+        lat: closestStore.location?.coordinates?.[1],
+        lng: closestStore.location?.coordinates?.[0],
       },
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      shipping,
+      title: closestStore.storeName,
+    };
+
+    return {
+      stores: [storeResponse],
+      pins: [pin],
+      limit: 1,
+      offset: 0,
+      total: 1,
     };
   }
 }
