@@ -10,7 +10,7 @@ export class StoreController {
   async listAll() {
     logger.info('Buscando todas as lojas...');
 
-    const stores = await this.storeService.getAllStores();
+    const stores = await this.storeService.listAllStores();
 
     return {
       status: 'success',
@@ -23,7 +23,7 @@ export class StoreController {
   async storeByCep(@Param('cep') cep: string) {
     logger.info(`Buscando loja e frete para o CEP: ${cep}`);
 
-    const result = await this.storeService.getStoreByCep(cep);
+    const result = await this.storeService.findStoreWithShippingByCep(cep);
 
     return {
       status: 'success',
@@ -34,7 +34,7 @@ export class StoreController {
   @Get('/id/:id')
   async storeById(@Param('id') id: string) {
     logger.info(`Buscando loja com ID: ${id}`);
-    const store = await this.storeService.getStoreById(id);
+    const store = await this.storeService.findStoreById(id);
     return {
       status: 'success',
       data: { store },
@@ -44,7 +44,7 @@ export class StoreController {
   @Get('/state/:state')
   async storeByState(@Param('state') state: string) {
     logger.info(`Buscando lojas no estado: ${state}`);
-    const stores = await this.storeService.getStoresByState(state);
+    const stores = await this.storeService.findStoresByState(state);
     return {
       status: 'success',
       length: stores.length,

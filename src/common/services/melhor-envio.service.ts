@@ -40,14 +40,10 @@ export class MelhorEnvioService {
     };
 
     try {
+      logger.info('Chamando a API do Melhor Envio...');
       const { data } = await firstValueFrom(
         this.httpService.post<MelhorEnvioResponse[]>(url, payload, { headers }),
       );
-
-      logger.info('Chamando a API do Melhor Envio...');
-      logger.info(JSON.stringify(data, null, 2));
-      logger.info('Resposta recebida do Melhor Envio!');
-
       const transformed: ShippingOption[] = Array.isArray(data)
         ? data.map((opt) => ({
             prazo: `${opt.delivery_time} dias úteis`,
@@ -55,6 +51,9 @@ export class MelhorEnvioService {
             description: opt.name,
           }))
         : [];
+
+      logger.info('Resposta recebida do Melhor Envio!');
+
       return { type: 'LOJA', value: transformed };
     } catch (err: unknown) {
       logger.error('Erro na integração com Melhor Envio', err);
