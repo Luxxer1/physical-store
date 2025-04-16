@@ -12,6 +12,7 @@ import { GoogleDirectionsResponse } from 'src/common/interfaces/googleDirections
 import { MelhorEnvioResponse } from 'src/common/interfaces/melhor-envio-response.interface';
 import { ShippingResult } from 'src/common/interfaces/shipping-result.interface';
 import { StoreByCepResponse } from 'src/common/interfaces/store-by-cep-response.interface';
+import { ViaCepService } from 'src/common/services/via-cep.service';
 
 type StoreWithDistance = Store & {
   distance: string;
@@ -26,6 +27,7 @@ export class StoreService {
   constructor(
     @InjectModel(Store.name) private readonly storeModel: Model<StoreDocument>,
     private readonly httpService: HttpService,
+    private viaCep: ViaCepService,
   ) {}
 
   async getAllStores(): Promise<Store[]> {
@@ -106,23 +108,7 @@ export class StoreService {
   }
 
   private async fetchCepData(cep: string): Promise<ViaCepResponse> {
-    const url = `https://viacep.com.br/ws/${cep}/json/`;
-    try {
-      const response = await firstValueFrom(
-        this.httpService.get<ViaCepResponse>(url),
-      );
-      return response.data;
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        logger.error(`Erro ao buscar dados do CEP: ${error.message}`);
-      } else {
-        logger.error('Erro desconhecido ao buscar dados do CEP');
-      }
-      throw new HttpException(
-        'Erro ao buscar dados do CEP',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+    return await this.viaCep.getCepData(cep);
   }
 
   private async getCoordinatesFromAddress(

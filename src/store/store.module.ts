@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
 import { Store, StoreSchema } from './store.model';
 import { HttpModule } from '@nestjs/axios';
+import { ViaCepService } from 'src/common/services/via-cep.service';
 
 @Module({
   imports: [
@@ -18,6 +19,6 @@ import { HttpModule } from '@nestjs/axios';
     HttpModule,
   ],
   controllers: [StoreController],
-  providers: [StoreService],
+  providers: [StoreService, ViaCepService],
 })
 export class StoreModule {}
