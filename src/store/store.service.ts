@@ -78,7 +78,7 @@ export class StoreService {
   }
 
   async findStoreWithShippingByCep(cep: string): Promise<StoreByCepResponse> {
-    this.ensureValidCep(cep);
+    await this.ensureValidCep(cep);
 
     logger.info(`Buscando loja e frete para CEP: ${cep}`);
 
