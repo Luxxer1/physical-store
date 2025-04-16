@@ -7,7 +7,6 @@ import logger from 'src/common/logger/logger';
 import { firstValueFrom } from 'rxjs';
 import { ViaCepResponse } from 'src/common/interfaces/viaCep.interface';
 import { FormattedStore } from 'src/common/interfaces/formattedStore.interface';
-import { GoogleGeocodeResponse } from 'src/common/interfaces/googleGeocode.interface';
 import { MelhorEnvioResponse } from 'src/common/interfaces/melhor-envio-response.interface';
 import { ShippingResult } from 'src/common/interfaces/shipping-result.interface';
 import { StoreByCepResponse } from 'src/common/interfaces/store-by-cep-response.interface';
@@ -89,13 +88,15 @@ export class StoreService {
     return this.formatStores(sortedStores);
   }
 
-  private validateApiKey(): void {
-    if (!process.env.API_KEY) {
+  private validateApiKey(): string {
+    const apiKey = process.env.API_KEY;
+    if (!apiKey) {
       throw new HttpException(
         'API KEY não definida',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+    return apiKey;
   }
 
   private validateCepFormat(cep: string): void {
@@ -114,44 +115,45 @@ export class StoreService {
   private async getCoordinatesFromAddress(
     cepData: ViaCepResponse,
   ): Promise<{ lat: number; lng: number }> {
-    const address = encodeURIComponent(
-      `${cepData.logradouro}, ${cepData.bairro}, ${cepData.localidade}, ${cepData.uf}`,
-    );
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${process.env.API_KEY}`;
-    try {
-      const response = await firstValueFrom(
-        this.httpService.get<GoogleGeocodeResponse>(url),
-      );
-      const geocodeData = response.data;
-      if (!geocodeData.results || geocodeData.results.length === 0) {
-        throw new HttpException(
-          'Não foi possível obter as coordenadas do endereço.',
-          HttpStatus.NOT_FOUND,
-        );
-      }
-      return geocodeData.results[0].geometry.location;
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        logger.error(`Erro ao obter coordenadas: ${error.message}`);
-      } else {
-        logger.error('Erro desconhecido ao obter coordenadas.');
-      }
-      throw new HttpException(
-        'Erro ao obter coordenadas',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+    const apiKey = this.validateApiKey();
+
+    const address = `${cepData.logradouro}, ${cepData.bairro}, ${cepData.localidade}, ${cepData.uf}`;
+
+    return this.googleMapsService.geocode(address, apiKey);
+
+    // const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${process.env.API_KEY}`;
+    // try {
+    //   const response = await firstValueFrom(
+    //     this.httpService.get<GoogleGeocodeResponse>(url),
+    //   );
+    //   const geocodeData = response.data;
+    //   if (!geocodeData.results || geocodeData.results.length === 0) {
+    //     throw new HttpException(
+    //       'Não foi possível obter as coordenadas do endereço.',
+    //       HttpStatus.NOT_FOUND,
+    //     );
+    //   }
+    //   return geocodeData.results[0].geometry.location;
+    // } catch (error: unknown) {
+    //   if (error instanceof Error) {
+    //     logger.error(`Erro ao obter coordenadas: ${error.message}`);
+    //   } else {
+    //     logger.error('Erro desconhecido ao obter coordenadas.');
+    //   }
+    //   throw new HttpException(
+    //     'Erro ao obter coordenadas',
+    //     HttpStatus.INTERNAL_SERVER_ERROR,
+    //   );
+    // }
   }
 
   private async calculateDistance(
     origin: string,
     destination: string,
   ): Promise<number> {
-    return this.googleMapsService.getDistance(
-      origin,
-      destination,
-      process.env.API_KEY!,
-    );
+    const apiKey = this.validateApiKey();
+
+    return this.googleMapsService.getDistance(origin, destination, apiKey);
   }
 
   private async getNearbyStoresWithDistance(
