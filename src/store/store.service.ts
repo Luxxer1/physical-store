@@ -10,6 +10,8 @@ import { FormattedStore } from 'src/common/interfaces/formattedStore.interface';
 import { ShippingResult } from 'src/common/interfaces/shipping-result.interface';
 import { StoreByCepResponse } from 'src/common/interfaces/store-by-cep-response.interface';
 import logger from 'src/common/logger/logger';
+import { CepDto } from 'src/common/dtos/cep.dto';
+import { validateOrReject } from 'class-validator';
 
 interface Coordinates {
   lat: number;
@@ -91,10 +93,15 @@ export class StoreService {
     return this.storeModel.find(filter).lean().exec();
   }
 
-  private ensureValidCep(cep: string): void {
-    if (!/^\d{5}-?\d{3}$/.test(cep)) {
+  private async ensureValidCep(cep: string): Promise<void> {
+    const cepDto = new CepDto();
+    cepDto.cep = cep;
+
+    try {
+      await validateOrReject(cepDto);
+    } catch {
       throw new HttpException(
-        'CEP inválido. Deve conter 8 dígitos numéricos, podendo ou não ter hífen.',
+        'CEP inválido. Verifique o formato e tente novamente.',
         HttpStatus.BAD_REQUEST,
       );
     }
