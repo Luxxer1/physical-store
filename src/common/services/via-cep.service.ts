@@ -2,7 +2,6 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { ViaCepResponse } from '../interfaces/viaCep.interface';
-import logger from '../logger/logger';
 
 @Injectable()
 export class ViaCepService {
@@ -20,11 +19,15 @@ export class ViaCepService {
       }
       return data;
     } catch (err: unknown) {
-      logger.error('Erro ao buscar dados do CEP', err);
-      throw new HttpException(
-        'Erro ao buscar dados do CEP',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      if (err instanceof HttpException) {
+        throw err;
+      }
+
+      const errMsg =
+        'Erro ao buscar dados do CEP: ' +
+        (err instanceof Error ? err.message : JSON.stringify(err));
+
+      throw new HttpException(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }
