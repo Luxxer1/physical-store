@@ -3,7 +3,6 @@ import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { GoogleGeocodeResponse } from '../interfaces/googleGeocode.interface';
 import { GoogleDirectionsResponse } from '../interfaces/googleDirections.interface';
-import logger from '../logger/logger';
 
 @Injectable()
 export class GoogleMapsService {
@@ -18,6 +17,7 @@ export class GoogleMapsService {
     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
       address,
     )}&key=${apiKey}`;
+
     try {
       const { data } = await firstValueFrom(
         this.httpService.get<GoogleGeocodeResponse>(url),
@@ -30,11 +30,15 @@ export class GoogleMapsService {
       }
       return data.results[0].geometry.location;
     } catch (err: unknown) {
-      logger.error('Erro no Geocode do Google Maps', err);
-      throw new HttpException(
-        'Erro ao obter coordenadas.',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      if (err instanceof HttpException) {
+        throw err;
+      }
+
+      const msgError =
+        'Erro no Geocode do Google Maps' +
+        (err instanceof Error ? err.message : JSON.stringify(err));
+
+      throw new HttpException(msgError, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -58,16 +62,15 @@ export class GoogleMapsService {
         data.routes[0].legs[0].distance.value / this.METERS_IN_KM;
 
       return parseFloat(distanceInKm.toFixed(2));
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        logger.error(`Erro ao calcular distância: ${error.message}`);
-      } else {
-        logger.error('Erro desconhecido ao calcular distância.');
+    } catch (err: unknown) {
+      if (err instanceof HttpException) {
+        throw err;
       }
-      throw new HttpException(
-        'Erro ao calcular a distância.',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+
+      const msgError =
+        'Erro ao calcular distância: ' +
+        (err instanceof Error ? err.message : JSON.stringify(err));
+      throw new HttpException(msgError, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

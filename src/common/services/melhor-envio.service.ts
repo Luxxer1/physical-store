@@ -60,11 +60,11 @@ export class MelhorEnvioService {
 
       return { type: 'LOJA', value: transformed };
     } catch (err: unknown) {
-      const msg =
+      const msgError =
         'Erro ao calcular frete: ' +
         (err instanceof Error ? err.message : JSON.stringify(err));
 
-      throw new HttpException(msg, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(msgError, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }
