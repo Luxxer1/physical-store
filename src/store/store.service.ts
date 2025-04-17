@@ -46,7 +46,7 @@ export class StoreService {
   }
 
   async listAllStores(): Promise<Store[]> {
-    logger.info('Buscando todas as lojas');
+    logger.info('Buscando todas as lojas...');
     const stores = await this.queryStores({});
     if (!stores.length) {
       throw new HttpException('Nenhuma loja encontrada', HttpStatus.NOT_FOUND);
@@ -64,7 +64,7 @@ export class StoreService {
   }
 
   async findStoresByState(state: string): Promise<Store[]> {
-    logger.info(`Buscando lojas por estado: ${state}`);
+    logger.info(`Buscando lojas no estado: ${state}`);
     const stores = await this.queryStores({
       state: { $regex: `^${state}$`, $options: 'i' },
     });
@@ -80,7 +80,7 @@ export class StoreService {
   async findStoreWithShippingByCep(cep: string): Promise<StoreByCepResponse> {
     await this.ensureValidCep(cep);
 
-    logger.info(`Buscando loja e frete para CEP: ${cep}`);
+    logger.info(`Buscando loja e frete para o CEP: ${cep}`);
 
     const origin = await this.getCoordinatesFromCep(cep);
     const closest = await this.findNearestStore(origin);

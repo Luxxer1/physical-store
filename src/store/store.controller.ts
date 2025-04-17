@@ -1,6 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { StoreService } from './store.service';
-import logger from 'src/common/logger/logger';
 
 @Controller('store')
 export class StoreController {
@@ -8,8 +7,6 @@ export class StoreController {
 
   @Get()
   async listAll() {
-    logger.info('Buscando todas as lojas...');
-
     const stores = await this.storeService.listAllStores();
 
     return {
@@ -21,8 +18,6 @@ export class StoreController {
 
   @Get('/cep/:cep')
   async storeByCep(@Param('cep') cep: string) {
-    logger.info(`Buscando loja e frete para o CEP: ${cep}`);
-
     const result = await this.storeService.findStoreWithShippingByCep(cep);
 
     return {
@@ -33,8 +28,8 @@ export class StoreController {
 
   @Get('/id/:id')
   async storeById(@Param('id') id: string) {
-    logger.info(`Buscando loja com ID: ${id}`);
     const store = await this.storeService.findStoreById(id);
+
     return {
       status: 'success',
       data: { store },
@@ -43,8 +38,8 @@ export class StoreController {
 
   @Get('/state/:state')
   async storeByState(@Param('state') state: string) {
-    logger.info(`Buscando lojas no estado: ${state}`);
     const stores = await this.storeService.findStoresByState(state);
+
     return {
       status: 'success',
       length: stores.length,
