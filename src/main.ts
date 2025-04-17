@@ -20,10 +20,12 @@ async function bootstrap() {
     .setTitle('Physical Store')
     .setDescription('API para localizar lojas e calcular frete')
     .setVersion('2.0')
-    .addTag('Stores')
+    .addTag('Store')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, documentFactory);
+  SwaggerModule.setup('swagger', app, documentFactory, {
+    jsonDocumentUrl: 'swagger/json',
+  });
 
   app.useGlobalFilters(new GlobalExceptionFilter());
 
