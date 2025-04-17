@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
-import { ViaCepResponse } from '../interfaces/viaCep.interface';
+import { ViaCepResponse } from '../interfaces/via-cep.interface';
 
 @Injectable()
 export class ViaCepService {

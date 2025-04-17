@@ -6,22 +6,13 @@ import { Store, StoreDocument } from './store.model';
 import { ViaCepService } from 'src/common/services/via-cep.service';
 import { GoogleMapsService } from 'src/common/services/google-maps.service';
 import { MelhorEnvioService } from 'src/common/services/melhor-envio.service';
-import { FormattedStore } from 'src/common/interfaces/formattedStore.interface';
+import { FormattedStore } from 'src/store/interfaces/formatted-store.interface';
 import { ShippingResult } from 'src/common/interfaces/shipping-result.interface';
-import { StoreByCepResponse } from 'src/common/interfaces/store-by-cep-response.interface';
+import { StoreByCepResponse } from 'src/store/interfaces/store-by-cep-response.interface';
 import logger from 'src/common/logger/logger';
 import { CepDto } from 'src/common/dtos/cep.dto';
 import { validateOrReject } from 'class-validator';
-
-interface Coordinates {
-  lat: number;
-  lng: number;
-}
-
-type StoreWithDistance = Store & {
-  distance: string;
-  numericDistance: number;
-};
+import { Coordinates, StoreWithDistance } from './interfaces/store.interfaces';
 
 @Injectable()
 export class StoreService {

@@ -1,8 +1,8 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
-import { GoogleGeocodeResponse } from '../interfaces/googleGeocode.interface';
-import { GoogleDirectionsResponse } from '../interfaces/googleDirections.interface';
+import { GoogleGeocodeResponse } from '../interfaces/google-geocode.interface';
+import { GoogleDirectionsResponse } from '../interfaces/google-directions.interface';
 
 @Injectable()
 export class GoogleMapsService {
