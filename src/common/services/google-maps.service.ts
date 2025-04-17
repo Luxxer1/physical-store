@@ -3,6 +3,7 @@ import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { GoogleGeocodeResponse } from '../interfaces/google-geocode.interface';
 import { GoogleDirectionsResponse } from '../interfaces/google-directions.interface';
+import logger from '../logger/logger';
 
 @Injectable()
 export class GoogleMapsService {
@@ -14,6 +15,8 @@ export class GoogleMapsService {
     address: string,
     apiKey: string,
   ): Promise<{ lat: number; lng: number }> {
+    logger.info(`[GoogleMapsService] geocode - Endereço="${address}"`);
+
     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
       address,
     )}&key=${apiKey}`;
@@ -24,7 +27,7 @@ export class GoogleMapsService {
       );
       if (!data.results?.length) {
         throw new HttpException(
-          'Não foi possível obter coordenadas.',
+          '[GoogleMapsService] geocode - Não foi possível obter coordenadas.',
           HttpStatus.NOT_FOUND,
         );
       }
@@ -35,7 +38,7 @@ export class GoogleMapsService {
       }
 
       const msgError =
-        'Erro no Geocode do Google Maps' +
+        '[GoogleMapsService] geocode - Erro' +
         (err instanceof Error ? err.message : JSON.stringify(err));
 
       throw new HttpException(msgError, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -54,7 +57,7 @@ export class GoogleMapsService {
       );
       if (data.status !== 'OK' || !data.routes?.length) {
         throw new HttpException(
-          'Não foi possível calcular a distância.',
+          '[GoogleMapsService] getDistance - Não foi possível calcular a distância.',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
@@ -68,8 +71,9 @@ export class GoogleMapsService {
       }
 
       const msgError =
-        'Erro ao calcular distância: ' +
+        '[GoogleMapsService] getDistance - Erro ao calcular distância: ' +
         (err instanceof Error ? err.message : JSON.stringify(err));
+
       throw new HttpException(msgError, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }

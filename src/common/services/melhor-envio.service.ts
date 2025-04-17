@@ -41,7 +41,7 @@ export class MelhorEnvioService {
 
     try {
       logger.info(
-        `Enviando requisição para MelhorEnvio - De: ${fromCep} Para: ${toCep}`,
+        `[MelhorEnvioService] Chamando API para calcular frete - De: ${fromCep} Para: ${toCep}`,
       );
       const { data } = await firstValueFrom(
         this.httpService.post<MelhorEnvioResponse[]>(url, payload, { headers }),
@@ -55,13 +55,13 @@ export class MelhorEnvioService {
         : [];
 
       logger.info(
-        `Resposta recebida de MelhorEnvio - ${data.length} opções de frete retornadas`,
+        `[MelhorEnvioService] Resposta recebida - ${data.length} opções de frete retornadas`,
       );
 
       return { type: 'LOJA', value: transformed };
     } catch (err: unknown) {
       const msgError =
-        'Erro ao calcular frete: ' +
+        '[MelhorEnvioService] Erro ao calcular frete: ' +
         (err instanceof Error ? err.message : JSON.stringify(err));
 
       throw new HttpException(msgError, HttpStatus.INTERNAL_SERVER_ERROR);

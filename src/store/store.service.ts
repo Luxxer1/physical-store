@@ -6,7 +6,6 @@ import { Store, StoreDocument } from './store.model';
 import { ViaCepService } from 'src/common/services/via-cep.service';
 import { GoogleMapsService } from 'src/common/services/google-maps.service';
 import { MelhorEnvioService } from 'src/common/services/melhor-envio.service';
-import { FormattedStore } from 'src/store/interfaces/formatted-store.interface';
 import { ShippingResult } from 'src/common/interfaces/shipping-result.interface';
 import { StoreByCepResponse } from 'src/store/interfaces/store-by-cep-response.interface';
 import logger from 'src/common/logger/logger';
@@ -16,7 +15,7 @@ import { Coordinates, StoreWithDistance } from './interfaces/store.interfaces';
 
 @Injectable()
 export class StoreService {
-  private readonly apiKey: string;
+  private readonly googleApiKey: string;
 
   constructor(
     @InjectModel(Store.name) private readonly storeModel: Model<StoreDocument>,
@@ -33,11 +32,10 @@ export class StoreService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-    this.apiKey = token;
+    this.googleApiKey = token;
   }
 
   async listAllStores(): Promise<Store[]> {
-    logger.info('Buscando todas as lojas...');
     const stores = await this.queryStores({});
     if (!stores.length) {
       throw new HttpException('Nenhuma loja encontrada', HttpStatus.NOT_FOUND);
@@ -46,7 +44,6 @@ export class StoreService {
   }
 
   async findStoreById(id: string): Promise<Store> {
-    logger.info(`Buscando loja por ID: ${id}`);
     const store = await this.storeModel.findById(id).lean().exec();
     if (!store) {
       throw new HttpException('Loja não encontrada', HttpStatus.NOT_FOUND);
@@ -55,7 +52,6 @@ export class StoreService {
   }
 
   async findStoresByState(state: string): Promise<Store[]> {
-    logger.info(`Buscando lojas no estado: ${state}`);
     const stores = await this.queryStores({
       state: { $regex: `^${state}$`, $options: 'i' },
     });
@@ -71,8 +67,6 @@ export class StoreService {
   async findStoreWithShippingByCep(cep: string): Promise<StoreByCepResponse> {
     await this.ensureValidCep(cep);
 
-    logger.info(`Buscando loja e frete para o CEP: ${cep}`);
-
     const origin = await this.getCoordinatesFromCep(cep);
     const closest = await this.findNearestStore(origin);
     const shipping = await this.getShippingOptions(cep, closest);
@@ -80,9 +74,7 @@ export class StoreService {
     return this.formatCepResponse(closest, shipping);
   }
 
-  private async queryStores(filter: FilterQuery<Store>): Promise<Store[]> {
-    return this.storeModel.find(filter).lean().exec();
-  }
+  // ====================================================================== //
 
   private async ensureValidCep(cep: string): Promise<void> {
     const cepDto = new CepDto();
@@ -97,7 +89,6 @@ export class StoreService {
       );
     }
   }
-
   private async getCoordinatesFromCep(cep: string): Promise<string> {
     const cepData = await this.viaCep.getCepData(cep);
     const coords = await this.geocodeAddress(
@@ -107,14 +98,22 @@ export class StoreService {
   }
 
   private async geocodeAddress(address: string): Promise<Coordinates> {
-    return this.googleMapsService.geocode(address, this.apiKey);
+    return this.googleMapsService.geocode(address, this.googleApiKey);
   }
 
   private async calculateDistance(
     origin: string,
     destination: string,
   ): Promise<number> {
-    return this.googleMapsService.getDistance(origin, destination, this.apiKey);
+    return this.googleMapsService.getDistance(
+      origin,
+      destination,
+      this.googleApiKey,
+    );
+  }
+
+  private async queryStores(filter: FilterQuery<Store>): Promise<Store[]> {
+    return this.storeModel.find(filter).lean().exec();
   }
 
   private async calculateStoresDistance(
@@ -140,30 +139,30 @@ export class StoreService {
     return stores.sort((a, b) => a.numericDistance - b.numericDistance);
   }
 
-  private mapFormattedStores(stores: StoreWithDistance[]): FormattedStore[] {
-    return stores.map((s) => ({
-      storeName: s.storeName,
-      zipCode: s.zipCode,
-      address: s.address,
-      number: s.number,
-      neighborhood: s.neighborhood,
-      city: s.city,
-      state: s.state,
-      phoneNumber: s.phoneNumber,
-      businessHour: s.businessHour,
-      distance: s.distance,
-    }));
-  }
-
   private async findNearestStore(origin: string): Promise<StoreWithDistance> {
     const list = await this.calculateStoresDistance(origin);
     if (!list.length) {
       throw new HttpException(
-        'Nenhuma loja encontrada próxima ao CEP informado',
+        'Não há lojas cadastradas para calcular distância com o CEP informado.',
         HttpStatus.NOT_FOUND,
       );
     }
     return this.sortByDistance(list)[0];
+  }
+
+  private async getShippingOptions(
+    toCep: string,
+    store: StoreWithDistance,
+  ): Promise<ShippingResult> {
+    if (store.numericDistance <= 50) {
+      return {
+        type: 'PDV',
+        value: [
+          { prazo: '1 dia útil', price: 'R$ 15.00', description: 'Motoboy' },
+        ],
+      };
+    }
+    return this.melhorEnvioService.calculate(store.zipCode, toCep);
   }
 
   private formatCepResponse(
@@ -194,20 +193,5 @@ export class StoreService {
       offset: 0,
       total: 1,
     };
-  }
-
-  private async getShippingOptions(
-    toCep: string,
-    store: StoreWithDistance,
-  ): Promise<ShippingResult> {
-    if (store.numericDistance <= 50) {
-      return {
-        type: 'PDV',
-        value: [
-          { prazo: '1 dia útil', price: 'R$ 15.00', description: 'Motoboy' },
-        ],
-      };
-    }
-    return this.melhorEnvioService.calculate(store.zipCode, toCep);
   }
 }

@@ -15,7 +15,10 @@ export class ViaCepService {
       );
       const data = response.data;
       if (data.erro) {
-        throw new HttpException('CEP não encontrado.', HttpStatus.NOT_FOUND);
+        throw new HttpException(
+          '[ViaCepService] CEP não encontrado.',
+          HttpStatus.NOT_FOUND,
+        );
       }
       return data;
     } catch (err: unknown) {
@@ -24,7 +27,7 @@ export class ViaCepService {
       }
 
       const errMsg =
-        'Erro ao buscar dados do CEP: ' +
+        '[ViaCepService] Erro ao buscar dados do CEP: ' +
         (err instanceof Error ? err.message : JSON.stringify(err));
 
       throw new HttpException(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
