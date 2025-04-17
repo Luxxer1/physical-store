@@ -20,7 +20,7 @@ export class MelhorEnvioService {
     const token = this.configService.get<string>('MELHOR_ENVIO_TOKEN');
     if (!token) {
       throw new HttpException(
-        'Token do Melhor Envio não definido',
+        'MELHOR_ENVIO_TOKEN não definido',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -40,7 +40,9 @@ export class MelhorEnvioService {
     };
 
     try {
-      logger.info('Chamando a API do Melhor Envio...');
+      logger.info(
+        `Enviando requisição para MelhorEnvio - De: ${fromCep} Para: ${toCep}`,
+      );
       const { data } = await firstValueFrom(
         this.httpService.post<MelhorEnvioResponse[]>(url, payload, { headers }),
       );
@@ -52,15 +54,17 @@ export class MelhorEnvioService {
           }))
         : [];
 
-      logger.info('Resposta recebida do Melhor Envio!');
+      logger.info(
+        `Resposta recebida de MelhorEnvio - ${data.length} opções de frete retornadas`,
+      );
 
       return { type: 'LOJA', value: transformed };
     } catch (err: unknown) {
-      logger.error('Erro na integração com Melhor Envio', err);
-      throw new HttpException(
-        'Erro ao calcular frete.',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      const msg =
+        'Erro ao calcular frete: ' +
+        (err instanceof Error ? err.message : JSON.stringify(err));
+
+      throw new HttpException(msg, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }
