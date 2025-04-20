@@ -38,7 +38,7 @@ export class StoreService {
   async listAllStores(): Promise<Store[]> {
     const stores = await this.queryStores({});
     if (!stores.length) {
-      throw new HttpException('Nenhuma loja encontrada', HttpStatus.NOT_FOUND);
+      throw new HttpException('Nenhuma loja cadastrada', HttpStatus.NOT_FOUND);
     }
     return stores;
   }
@@ -89,6 +89,7 @@ export class StoreService {
       );
     }
   }
+
   private async getCoordinatesFromCep(cep: string): Promise<string> {
     const cepData = await this.viaCep.getCepData(cep);
     const coords = await this.geocodeAddress(
