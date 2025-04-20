@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { StoreService } from './store.service';
 import { StoreByCepResponseDto } from './dto/store-by-cep-response.dto';
 import { ApiParam, ApiResponse } from '@nestjs/swagger';
@@ -23,13 +23,14 @@ export class StoreController {
     type: ListAllResponseDto,
   })
   @Get()
-  async listAll() {
-    const stores = await this.storeService.listAllStores();
+  async listAll(@Query('limit') limit = 10, @Query('offset') offset = 0) {
+    const stores = await this.storeService.listAllStores(+limit, +offset);
 
     return {
-      status: 'success',
-      length: stores.length,
       data: { stores },
+      limit: limit,
+      offset: offset,
+      total: stores.length,
     };
   }
 
@@ -78,13 +79,23 @@ export class StoreController {
     type: StoreByStateResponseDto,
   })
   @Get('/state/:state')
-  async storeByState(@Param('state') state: string) {
-    const stores = await this.storeService.findStoresByState(state);
+  async storeByState(
+    @Param('state') state: string,
+    @Query('limit') limit = 10,
+    @Query('offset') offset = 0,
+  ) {
+    const stores = await this.storeService.findStoresByState(
+      state,
+      +limit,
+      +offset,
+    );
 
     return {
       status: 'success',
-      length: stores.length,
       data: { stores },
+      limit: +limit,
+      offset: +offset,
+      total: stores.length,
     };
   }
 

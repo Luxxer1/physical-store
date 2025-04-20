@@ -35,8 +35,11 @@ export class StoreService {
     this.googleApiKey = token;
   }
 
-  async listAllStores(): Promise<Store[]> {
-    const stores = await this.queryStores({});
+  async listAllStores(
+    limit: number = 10,
+    offset: number = 0,
+  ): Promise<Store[]> {
+    const stores = await this.queryStores({}, limit, offset);
     if (!stores.length) {
       throw new HttpException('Nenhuma loja cadastrada', HttpStatus.NOT_FOUND);
     }
@@ -51,10 +54,18 @@ export class StoreService {
     return store;
   }
 
-  async findStoresByState(state: string): Promise<Store[]> {
-    const stores = await this.queryStores({
-      state: { $regex: `^${state}$`, $options: 'i' },
-    });
+  async findStoresByState(
+    state: string,
+    limit: number,
+    offset: number,
+  ): Promise<Store[]> {
+    const stores = await this.queryStores(
+      {
+        state: { $regex: `^${state}$`, $options: 'i' },
+      },
+      limit,
+      offset,
+    );
     if (!stores.length) {
       throw new HttpException(
         'Nenhuma loja encontrada para o estado informado',
@@ -113,8 +124,12 @@ export class StoreService {
     );
   }
 
-  private async queryStores(filter: FilterQuery<Store>): Promise<Store[]> {
-    return this.storeModel.find(filter).lean().exec();
+  private async queryStores(
+    filter: FilterQuery<Store>,
+    limit: number = 10,
+    offset: number = 0,
+  ): Promise<Store[]> {
+    return this.storeModel.find(filter).skip(offset).limit(limit).lean().exec();
   }
 
   private async calculateStoresDistance(
