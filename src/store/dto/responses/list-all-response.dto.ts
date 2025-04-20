@@ -25,14 +25,26 @@ export class ListAllResponseDto {
   status: string;
 
   /**
-   * Quantidade de lojas retornadas.
-   * @example 1
-   */
-  length: number;
-
-  /**
    * Dados contendo o array de lojas.
    */
   @ApiProperty({ type: () => StoreListDataDto })
   data: StoreListDataDto;
+
+  /**
+   * Número máximo de lojas retornadas na resposta.
+   * @example 1
+   */
+  limit: number;
+
+  /**
+   * Número de lojas ignoradas (usado para paginação).
+   * @example 1
+   */
+  offset: number;
+
+  /**
+   * Número total de lojas disponíveis para a consulta (independente da paginação).
+   * @example 1
+   */
+  total: number;
 }

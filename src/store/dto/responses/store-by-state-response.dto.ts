@@ -17,13 +17,25 @@ export class StoreByStateResponseDto {
    */
   status: string;
 
-  /**
-   * Quantidade de lojas encontradas
-   * @example 1
-   */
-  length: number;
-
   /** Dados retornados contendo as lojas */
   @ApiProperty({ type: () => StoreByStateDataDto })
   data: StoreByStateDataDto;
+
+  /**
+   * Número máximo de lojas retornadas na resposta.
+   * @example 1
+   */
+  limit: number;
+
+  /**
+   * Número de lojas ignoradas (usado para paginação).
+   * @example 1
+   */
+  offset: number;
+
+  /**
+   * Número total de lojas disponíveis para a consulta (independente da paginação).
+   * @example 1
+   */
+  total: number;
 }

@@ -7,6 +7,9 @@ export type StoreDocument = Store & Document;
 @Schema()
 export class Store {
   @Prop({ required: true })
+  _id: string;
+
+  @Prop({ required: true })
   storeName: string;
 
   @Prop({ required: true })

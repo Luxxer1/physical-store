@@ -13,14 +13,15 @@ export interface StoreResponse {
 
 export interface StorePin {
   position: {
-    lat: number | undefined;
-    lng: number | undefined;
+    type: 'Point';
+    coordinates: [number, number];
   };
   title: string;
 }
 
 export interface StoreByCepResponse {
-  stores: StoreResponse[];
+  status: string;
+  data: StoreResponse[];
   pins: StorePin[];
   limit: number;
   offset: number;

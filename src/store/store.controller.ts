@@ -23,10 +23,14 @@ export class StoreController {
     type: ListAllResponseDto,
   })
   @Get()
-  async listAll(@Query('limit') limit = 10, @Query('offset') offset = 0) {
+  async listAll(
+    @Query('limit') limit = 10,
+    @Query('offset') offset = 0,
+  ): Promise<ListAllResponseDto> {
     const stores = await this.storeService.listAllStores(+limit, +offset);
 
     return {
+      status: 'success',
       data: { stores },
       limit: limit,
       offset: offset,
@@ -52,7 +56,7 @@ export class StoreController {
     type: StoreByIdResponseDto,
   })
   @Get('/id/:id')
-  async storeById(@Param('id') id: string) {
+  async storeById(@Param('id') id: string): Promise<StoreByIdResponseDto> {
     const store = await this.storeService.findStoreById(id);
 
     return {
@@ -83,7 +87,7 @@ export class StoreController {
     @Param('state') state: string,
     @Query('limit') limit = 10,
     @Query('offset') offset = 0,
-  ) {
+  ): Promise<StoreByStateResponseDto> {
     const stores = await this.storeService.findStoresByState(
       state,
       +limit,
@@ -119,12 +123,16 @@ export class StoreController {
     type: StoreByCepResponseDto,
   })
   @Get('/cep/:cep')
-  async storeByCep(@Param('cep') cep: string) {
+  async storeByCep(@Param('cep') cep: string): Promise<StoreByCepResponseDto> {
     const result = await this.storeService.findStoreWithShippingByCep(cep);
 
     return {
       status: 'success',
-      data: result,
+      data: result.data,
+      pins: result.pins,
+      limit: result.limit,
+      offset: result.offset,
+      total: result.total,
     };
   }
 }

@@ -190,7 +190,8 @@ export class StoreService {
     shipping: ShippingResult,
   ): StoreByCepResponse {
     return {
-      stores: [
+      status: 'success',
+      data: [
         {
           name: store.storeName,
           city: store.city,
@@ -203,8 +204,11 @@ export class StoreService {
       pins: [
         {
           position: {
-            lat: store.location.coordinates[1],
-            lng: store.location.coordinates[0],
+            type: 'Point',
+            coordinates: [
+              store.location.coordinates[1],
+              store.location.coordinates[0],
+            ],
           },
           title: store.storeName,
         },

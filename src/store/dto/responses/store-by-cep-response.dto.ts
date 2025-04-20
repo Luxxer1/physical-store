@@ -37,15 +37,21 @@ class StoreCepDto {
     type: [ShippingOptionDto],
     description: 'Opções de frete disponíveis',
   })
-  value: ShippingOptionDto[];
+  shipping: ShippingOptionDto[];
 }
 
 export class StoreByCepResponseDto {
+  /**
+   * Status da requisição.
+   * @example 'success'
+   */
+  status: string;
+
   @ApiProperty({
     type: [StoreCepDto],
     description: 'Dados da(s) loja(s) retornadas',
   })
-  stores: StoreCepDto[];
+  data: StoreCepDto[];
 
   @ApiProperty({ type: [PinDto], description: 'Pins para exibição no mapa' })
   pins: PinDto[];
