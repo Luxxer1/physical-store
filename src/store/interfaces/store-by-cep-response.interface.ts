@@ -4,8 +4,8 @@ export interface StoreResponse {
   postalCode: string;
   type: 'PDV' | 'LOJA';
   distance: string;
-  value: {
-    prazo: string;
+  shipping: {
+    estimatedDelivery: string;
     price: string;
     description: string;
   }[];

@@ -173,8 +173,12 @@ export class StoreService {
     if (store.numericDistance <= 50) {
       return {
         type: 'PDV',
-        value: [
-          { prazo: '1 dia útil', price: 'R$ 15.00', description: 'Motoboy' },
+        shipping: [
+          {
+            estimatedDelivery: '1 dia útil',
+            price: 'R$ 15.00',
+            description: 'Motoboy',
+          },
         ],
       };
     }
@@ -193,7 +197,7 @@ export class StoreService {
           postalCode: store.zipCode,
           type: shipping.type,
           distance: store.distance,
-          value: shipping.value,
+          shipping: shipping.shipping,
         },
       ],
       pins: [

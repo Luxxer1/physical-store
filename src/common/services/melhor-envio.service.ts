@@ -48,7 +48,7 @@ export class MelhorEnvioService {
       );
       const transformed: ShippingOption[] = Array.isArray(data)
         ? data.map((opt) => ({
-            prazo: `${opt.delivery_time} dias úteis`,
+            estimatedDelivery: `${opt.delivery_time} dias úteis`,
             price: `R$ ${parseFloat(opt.custom_price).toFixed(2)}`,
             description: opt.name,
           }))
@@ -58,7 +58,7 @@ export class MelhorEnvioService {
         `[MelhorEnvioService] Resposta recebida - ${data.length} opções de frete retornadas`,
       );
 
-      return { type: 'LOJA', value: transformed };
+      return { type: 'LOJA', shipping: transformed };
     } catch (err: unknown) {
       const msgError =
         '[MelhorEnvioService] Erro ao calcular frete: ' +
