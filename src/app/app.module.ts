@@ -1,6 +1,4 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { LoggerMiddleware } from 'src/common/logger/logger.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { StoreModule } from 'src/store/store.module';
@@ -14,8 +12,8 @@ import configuration from 'src/config/configuration';
     }),
     StoreModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
