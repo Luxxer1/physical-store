@@ -49,7 +49,7 @@ export class MelhorEnvioService {
       const transformed: ShippingOption[] = Array.isArray(data)
         ? data.map((opt) => ({
             estimatedDelivery: `${opt.delivery_time} dias úteis`,
-            price: `R$ ${parseFloat(opt.custom_price).toFixed(2)}`,
+            price: parseFloat(parseFloat(opt.custom_price).toFixed(2)),
             description: opt.name,
           }))
         : [];

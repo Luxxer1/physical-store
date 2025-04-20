@@ -176,7 +176,7 @@ export class StoreService {
         shipping: [
           {
             estimatedDelivery: '1 dia útil',
-            price: 'R$ 15.00',
+            price: 15.0,
             description: 'Motoboy',
           },
         ],

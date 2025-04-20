@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { StoreDto } from './store.dto';
+import { StoreDto } from '../shared/store.dto';
 
 class StoreByStateDataDto {
   /** Lista de lojas localizadas */

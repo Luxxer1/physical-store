@@ -6,7 +6,7 @@ export interface StoreResponse {
   distance: string;
   shipping: {
     estimatedDelivery: string;
-    price: string;
+    price: number;
     description: string;
   }[];
 }

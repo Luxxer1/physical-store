@@ -1,10 +1,10 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { StoreService } from './store.service';
-import { StoreByCepResponseDto } from './dto/store-by-cep-response.dto';
+import { StoreByCepResponseDto } from './dto/responses/store-by-cep-response.dto';
 import { ApiParam, ApiResponse } from '@nestjs/swagger';
-import { StoreByStateResponseDto } from './dto/store-by-state-response.dto';
-import { StoreByIdResponseDto } from './dto/store-by-id-response.dto';
-import { ListAllResponseDto } from './dto/store-list-response.dto';
+import { StoreByStateResponseDto } from './dto/responses/store-by-state-response.dto';
+import { StoreByIdResponseDto } from './dto/responses/store-by-id-response.dto';
+import { ListAllResponseDto } from './dto/responses/list-all-response.dto';
 
 @Controller('store')
 export class StoreController {

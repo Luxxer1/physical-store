@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { StoreDto } from './store.dto';
+import { StoreDto } from '../shared/store.dto';
 
 /**
  * Estrutura do campo `data` na resposta de listagem de todas as lojas.

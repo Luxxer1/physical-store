@@ -1,52 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-
-class PositionDto {
-  /**
-   * Latitude da loja
-   * @example -23.55052
-   */
-  lat: number;
-
-  /**
-   * Longitude da loja
-   * @example -46.633308
-   */
-  lng: number;
-}
-
-class PinDto {
-  @ApiProperty({
-    type: PositionDto,
-    description: 'Coordenadas para exibir no mapa',
-  })
-  position: PositionDto;
-
-  /**
-   * Título exibido no pin
-   * @example 'Loja Exemplo'
-   */
-  title: string;
-}
-
-class ShippingOptionDto {
-  /**
-   * Prazo de entrega
-   * @example '1 dia útil'
-   */
-  prazo: string;
-
-  /**
-   * Valor do frete
-   * @example 'R$ 15.00'
-   */
-  price: string;
-
-  /**
-   * Descrição do serviço de frete
-   * @example 'Motoboy'
-   */
-  description: string;
-}
+import { ShippingOptionDto } from '../shared/shipping-option.dto';
+import { PinDto } from '../shared/pin.dto';
 
 class StoreCepDto {
   /**

@@ -1,6 +1,6 @@
 export interface ShippingOption {
   estimatedDelivery: string;
-  price: string;
+  price: number;
   description: string;
 }
 
