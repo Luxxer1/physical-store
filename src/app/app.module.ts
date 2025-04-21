@@ -8,6 +8,7 @@ import configuration from 'src/config/configuration';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
       load: [configuration],
     }),
     StoreModule,
