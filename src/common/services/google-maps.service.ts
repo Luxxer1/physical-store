@@ -95,9 +95,9 @@ export class GoogleMapsService {
       const { data } = await firstValueFrom(
         this.httpService.get<GoogleDirectionsResponse>(url),
       );
-  
+
       switch (data.status) {
-        case 'OK':
+        case 'OK': {
           if (!data.routes?.length) {
             throw new HttpException(
               '[GoogleMapsService] getDistance - Nenhuma rota encontrada.',
@@ -107,6 +107,7 @@ export class GoogleMapsService {
           const distanceInKm =
             data.routes[0].legs[0].distance.value / this.METERS_IN_KM;
           return parseFloat(distanceInKm.toFixed(2));
+        }
         case 'NOT_FOUND':
           throw new HttpException(
             '[GoogleMapsService] getDistance - Origem ou destino não encontrados.',
@@ -168,3 +169,4 @@ export class GoogleMapsService {
       throw new HttpException(msgError, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+}
