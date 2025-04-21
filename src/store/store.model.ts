@@ -39,6 +39,9 @@ export class Store {
   @Prop({ required: true, enum: ['PDV', 'LOJA'], default: 'LOJA' })
   type: string;
 
+  @Prop({ required: true, default: 1 })
+  shippingTimeInDays: number;
+
   @Prop({
     type: {
       type: String,

@@ -96,6 +96,7 @@ describe('StoreController (e2e)', () => {
       phoneNumber: '81988887777',
       businessHour: '09:00-19:00',
       type: 'LOJA',
+      shippingTimeInDays: 1,
       location: { type: 'Point', coordinates: [-34.889553, -8.119294] },
     });
   });
@@ -192,6 +193,9 @@ describe('StoreController (e2e)', () => {
     expect(typeof body.limit).toBe('number');
     expect(typeof body.offset).toBe('number');
     expect(typeof body.total).toBe('number');
+
+    expect(body.data[0].shipping[0].estimatedDelivery).toBe('21 dias úteis');
+    expect(body.data[0].shipping[1].estimatedDelivery).toBe('11 dias úteis');
   });
 
   it('GET /store/cep/:cep deve retornar 400 para CEP inválido', async () => {
@@ -243,9 +247,7 @@ describe('StoreController (e2e)', () => {
   });
 
   // pagination
-
   it('GET /store deve retornar 2 lojas a partir do offset 1 (paginação)', async () => {
-    // Limpa e cadastra 4 lojas
     await storeModel.deleteMany({});
     await storeModel.create([
       {
