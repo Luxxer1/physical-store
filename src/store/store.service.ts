@@ -12,6 +12,7 @@ import logger from 'src/common/logger/logger';
 import { CepDto } from 'src/common/dtos/cep.dto';
 import { validateOrReject } from 'class-validator';
 import { Coordinates, StoreWithDistance } from './interfaces/store.interfaces';
+import { ViaCepResponse } from 'src/common/interfaces/via-cep.interface';
 
 @Injectable()
 export class StoreService {
@@ -103,10 +104,13 @@ export class StoreService {
 
   private async getCoordinatesFromCep(cep: string): Promise<string> {
     const cepData = await this.viaCep.getCepData(cep);
-    const coords = await this.geocodeAddress(
-      `${cepData.logradouro}, ${cepData.bairro}, ${cepData.localidade}, ${cepData.uf}`,
-    );
+    const address = this.buildAddressFromCepData(cepData);
+    const coords = await this.geocodeAddress(address);
     return `${coords.lat},${coords.lng}`;
+  }
+
+  private buildAddressFromCepData(cepData: ViaCepResponse): string {
+    return `${cepData.logradouro}, ${cepData.bairro}, ${cepData.localidade}, ${cepData.uf}`;
   }
 
   private async geocodeAddress(address: string): Promise<Coordinates> {
