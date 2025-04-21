@@ -52,7 +52,7 @@ export class StoreController {
   @ApiParam({
     name: 'id',
     description: 'ID para busca',
-    example: '67cb6061a9a283add117ff16',
+    example: '1',
   })
   @ApiResponse({
     description: 'Loja encontrada com sucesso.',
@@ -113,7 +113,7 @@ export class StoreController {
    * @remarks Retorna dados da loja e opções de frete para o CEP fornecido de acordo com a loja mais próxima.
    *
    * @throws {400} CEP inválido.
-   * @throws {404} Recurso não encontrado. CEP não encontrado ou não foi possível obter a localização do CEP.
+   * @throws {404} Recurso não encontrado: CEP inexistente, sem lojas próximas, localização do CEP indisponível ou rota não encontrada.
    * @throws {500} Erro interno do servidor.
    */
   @ApiParam({
