@@ -28,14 +28,17 @@ export class StoreController {
     @Query() query: PaginationQueryDto,
   ): Promise<ListAllResponseDto> {
     const { limit = 10, offset = 0 } = query;
-    const stores = await this.storeService.listAllStores(limit, offset);
+    const [stores, total] = await Promise.all([
+      this.storeService.listAllStores(limit, offset),
+      this.storeService.countAllStores(),
+    ]);
 
     return {
       status: 'success',
       data: { stores },
       limit,
       offset,
-      total: stores.length,
+      total: total,
     };
   }
 
@@ -89,18 +92,18 @@ export class StoreController {
     @Query() query: PaginationQueryDto,
   ): Promise<StoreByStateResponseDto> {
     const { limit = 10, offset = 0 } = query;
-    const stores = await this.storeService.findStoresByState(
-      state,
-      limit,
-      offset,
-    );
+    const filter = { state: { $regex: `^${state}$`, $options: 'i' } };
+    const [stores, total] = await Promise.all([
+      this.storeService.findStoresByState(state, limit, offset),
+      this.storeService.countAllStores(filter),
+    ]);
 
     return {
       status: 'success',
       data: { stores },
       limit,
       offset,
-      total: stores.length,
+      total,
     };
   }
 

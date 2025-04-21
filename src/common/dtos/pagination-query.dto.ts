@@ -4,7 +4,6 @@ import { IsInt, IsOptional, Min } from 'class-validator';
 export class PaginationQueryDto {
   /**
    * Limite de itens por página
-   * example: 10
    */
   @IsOptional()
   @Type(() => Number)
@@ -14,7 +13,6 @@ export class PaginationQueryDto {
 
   /**
    * Offset para paginação
-   * example: 0
    */
   @IsOptional()
   @Type(() => Number)

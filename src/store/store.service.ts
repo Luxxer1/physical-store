@@ -136,6 +136,10 @@ export class StoreService {
     return this.storeModel.find(filter).skip(offset).limit(limit).lean().exec();
   }
 
+  async countAllStores(filter: FilterQuery<Store> = {}): Promise<number> {
+    return this.storeModel.countDocuments(filter);
+  }
+
   private async calculateStoresDistance(
     origin: string,
   ): Promise<StoreWithDistance[]> {

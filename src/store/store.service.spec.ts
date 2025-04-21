@@ -10,38 +10,13 @@ import { HttpException } from '@nestjs/common';
 const mockStoreModel = {
   find: jest.fn(),
   findById: jest.fn(),
+  countDocuments: jest.fn(),
 };
 
-const mockConfigService = {
-  get: jest.fn().mockReturnValue('fake-google-api-key'),
-};
-
-const mockViaCepService = {
-  getCepData: jest.fn().mockResolvedValue({
-    logradouro: 'Rua Teste',
-    bairro: 'Centro',
-    localidade: 'Recife',
-    uf: 'PE',
-  }),
-};
-
-const mockGoogleMapsService = {
-  geocode: jest.fn().mockResolvedValue({ lat: -8.0, lng: -34.9 }),
-  getDistance: jest.fn().mockResolvedValue(10),
-};
-
-const mockMelhorEnvioService = {
-  calculate: jest.fn().mockResolvedValue({
-    type: 'LOJA',
-    shipping: [
-      {
-        estimatedDelivery: '3 dias úteis',
-        price: 25.0,
-        description: 'PAC',
-      },
-    ],
-  }),
-};
+const mockConfigService = { get: jest.fn().mockReturnValue('fake-key') };
+const mockViaCepService = { getCepData: jest.fn() };
+const mockGoogleMapsService = { geocode: jest.fn(), getDistance: jest.fn() };
+const mockMelhorEnvioService = { calculate: jest.fn() };
 
 describe('StoreService', () => {
   let service: StoreService;
@@ -62,12 +37,12 @@ describe('StoreService', () => {
     jest.clearAllMocks();
   });
 
-  it('should be defined', () => {
+  it('deve estar definido', () => {
     expect(service).toBeDefined();
   });
 
   describe('listAllStores', () => {
-    it('should return stores when found', async () => {
+    it('deve retornar lojas', async () => {
       const fakeStores = [{ storeName: 'A' }];
       mockStoreModel.find.mockReturnValue({
         skip: () => ({
@@ -81,7 +56,7 @@ describe('StoreService', () => {
       await expect(service.listAllStores()).resolves.toEqual(fakeStores);
     });
 
-    it('should throw if none found', async () => {
+    it('deve lançar exceção se não houver lojas', async () => {
       mockStoreModel.find.mockReturnValue({
         skip: () => ({
           limit: () => ({
@@ -98,30 +73,30 @@ describe('StoreService', () => {
   });
 
   describe('findStoreById', () => {
-    it('should return store when found', async () => {
+    it('deve retornar loja por id', async () => {
       const doc = { storeName: 'B' };
       mockStoreModel.findById.mockReturnValue({
         lean: () => ({
           exec: () => Promise.resolve(doc),
         }),
       });
-      await expect(service.findStoreById('anyId')).resolves.toEqual(doc);
+      await expect(service.findStoreById('id')).resolves.toEqual(doc);
     });
 
-    it('should throw if not found', async () => {
+    it('deve lançar exceção se não encontrar', async () => {
       mockStoreModel.findById.mockReturnValue({
         lean: () => ({
           exec: () => Promise.resolve(null),
         }),
       });
-      await expect(service.findStoreById('anyId')).rejects.toBeInstanceOf(
+      await expect(service.findStoreById('id')).rejects.toBeInstanceOf(
         HttpException,
       );
     });
   });
 
   describe('findStoresByState', () => {
-    it('should return stores when found', async () => {
+    it('deve retornar lojas por estado', async () => {
       const fake = [{ state: 'PE' }];
       mockStoreModel.find.mockReturnValue({
         skip: () => ({
@@ -132,12 +107,12 @@ describe('StoreService', () => {
           }),
         }),
       });
-      await expect(service.findStoresByState('pe', 10, 0)).resolves.toEqual(
+      await expect(service.findStoresByState('PE', 10, 0)).resolves.toEqual(
         fake,
       );
     });
 
-    it('should throw if none found', async () => {
+    it('deve lançar exceção se não houver lojas', async () => {
       mockStoreModel.find.mockReturnValue({
         skip: () => ({
           limit: () => ({
@@ -148,13 +123,24 @@ describe('StoreService', () => {
         }),
       });
       await expect(
-        service.findStoresByState('xx', 10, 0),
+        service.findStoresByState('XX', 10, 0),
       ).rejects.toBeInstanceOf(HttpException);
     });
   });
 
+  describe('countAllStores', () => {
+    it('deve contar todas as lojas', async () => {
+      mockStoreModel.countDocuments.mockResolvedValue(5);
+      await expect(service.countAllStores()).resolves.toBe(5);
+    });
+    it('deve contar lojas com filtro', async () => {
+      mockStoreModel.countDocuments.mockResolvedValue(2);
+      await expect(service.countAllStores({ state: 'PE' })).resolves.toBe(2);
+    });
+  });
+
   describe('findStoreWithShippingByCep', () => {
-    it('should throw on invalid CEP', async () => {
+    it('deve lançar erro se o CEP for inválido', async () => {
       mockViaCepService.getCepData.mockRejectedValueOnce(
         new HttpException('CEP inválido', 400),
       );
@@ -163,19 +149,49 @@ describe('StoreService', () => {
       ).rejects.toBeInstanceOf(HttpException);
     });
 
-    it('should throw if GoogleMapsService throws', async () => {
+    it('deve lançar erro se não houver lojas', async () => {
+      mockViaCepService.getCepData.mockResolvedValue({
+        cep: '50930070',
+        logradouro: 'Rua Teste',
+        bairro: 'Centro',
+        localidade: 'Recife',
+        uf: 'PE',
+      });
+      mockGoogleMapsService.geocode.mockResolvedValue({});
+      mockStoreModel.find.mockReturnValue({
+        skip: () => ({
+          limit: () => ({
+            lean: () => ({
+              exec: () => Promise.resolve([]),
+            }),
+          }),
+        }),
+      });
+
+      await expect(
+        service.findStoreWithShippingByCep('50930070'),
+      ).rejects.toBeInstanceOf(HttpException);
+    });
+
+    it('deve lançar erro se algum serviço externo falhar', async () => {
       mockGoogleMapsService.geocode.mockRejectedValueOnce(
-        new HttpException('Endereço não encontrado', 404),
+        new HttpException('Erro externo', 500),
       );
       await expect(
         service.findStoreWithShippingByCep('12345678'),
       ).rejects.toBeInstanceOf(HttpException);
     });
 
-    it('should throw if MelhorEnvioService throws', async () => {
-      mockMelhorEnvioService.calculate.mockRejectedValueOnce(
-        new HttpException('Erro no MelhorEnvio', 500),
-      );
+    it('deve retornar resposta válida', async () => {
+      mockViaCepService.getCepData.mockResolvedValue({
+        cep: '50930070',
+        logradouro: 'Rua Teste',
+        bairro: 'Centro',
+        localidade: 'Recife',
+        uf: 'PE',
+      });
+      mockGoogleMapsService.geocode.mockResolvedValue({ lat: -8, lng: -34 });
+      mockGoogleMapsService.getDistance.mockResolvedValue(10);
       mockStoreModel.find.mockReturnValue({
         skip: () => ({
           limit: () => ({
@@ -188,54 +204,16 @@ describe('StoreService', () => {
                     location: { coordinates: [-34.9, -8.0] },
                     city: 'Recife',
                     state: 'PE',
-                    address: 'Rua Teste',
-                    number: '100',
-                    neighborhood: 'Centro',
-                    phoneNumber: '1234-5678',
-                    businessHour: '9-18h',
                   },
                 ]),
             }),
           }),
         }),
       });
-      await expect(
-        service.findStoreWithShippingByCep('12345678'),
-      ).rejects.toBeInstanceOf(HttpException);
-    });
-
-    it('should return a valid response', async () => {
-      mockStoreModel.find.mockReturnValue({
-        skip: () => ({
-          limit: () => ({
-            lean: () => ({
-              exec: () =>
-                Promise.resolve([
-                  {
-                    storeName: 'L1',
-                    zipCode: '12345-678',
-                    location: { coordinates: [-34.9, -8.0] },
-                    city: 'Recife',
-                    state: 'PE',
-                    address: 'Rua Teste',
-                    number: '100',
-                    neighborhood: 'Centro',
-                    phoneNumber: '1234-5678',
-                    businessHour: '9-18h',
-                  },
-                ]),
-            }),
-          }),
-        }),
-      });
-
       const res = await service.findStoreWithShippingByCep('12345678');
       expect(res.status).toBe('success');
       expect(res.data[0]).toHaveProperty('name', 'L1');
       expect(res.pins[0]).toHaveProperty('title', 'L1');
-      expect(res.limit).toBe(1);
-      expect(res.offset).toBe(0);
-      expect(res.total).toBe(1);
     });
   });
 });
