@@ -46,13 +46,34 @@ export class MelhorEnvioService {
       const { data } = await firstValueFrom(
         this.httpService.post<MelhorEnvioResponse[]>(url, payload, { headers }),
       );
-      const transformed: ShippingOption[] = Array.isArray(data)
-        ? data.map((opt) => ({
-            estimatedDelivery: `${opt.delivery_time} dias úteis`,
-            price: Number(opt.custom_price),
-            description: opt.name,
-          }))
-        : [];
+
+      if (!Array.isArray(data)) {
+        throw new HttpException(
+          '[MelhorEnvioService] Resposta inesperada da API do MelhorEnvio.',
+          HttpStatus.BAD_GATEWAY,
+        );
+      }
+
+      const validOptions = data.filter(
+        (opt) =>
+          opt &&
+          typeof opt.name === 'string' &&
+          typeof opt.custom_price === 'string' &&
+          typeof opt.delivery_time === 'number',
+      );
+
+      if (!validOptions.length) {
+        throw new HttpException(
+          '[MelhorEnvioService] Nenhuma opção de frete válida retornada pela API do MelhorEnvio.',
+          HttpStatus.BAD_GATEWAY,
+        );
+      }
+
+      const transformed: ShippingOption[] = validOptions.map((opt) => ({
+        estimatedDelivery: `${opt.delivery_time} dias úteis`,
+        price: Number(opt.custom_price),
+        description: opt.name,
+      }));
 
       logger.info(
         `[MelhorEnvioService] Resposta recebida - ${data.length} opções de frete retornadas`,
@@ -60,6 +81,17 @@ export class MelhorEnvioService {
 
       return { type: 'LOJA', shipping: transformed };
     } catch (err: unknown) {
+      if (typeof err === 'object' && err !== null && 'response' in err) {
+        const errorWithResponse = err as {
+          response?: { status?: number; data?: any };
+        };
+        if (errorWithResponse.response?.status === 422) {
+          throw new HttpException(
+            '[MelhorEnvioService] Dados inválidos enviados para a API do MelhorEnvio.',
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      }
       const msgError =
         '[MelhorEnvioService] Erro ao calcular frete: ' +
         (err instanceof Error ? err.message : JSON.stringify(err));
