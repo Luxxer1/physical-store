@@ -5,6 +5,7 @@ import { ApiParam, ApiResponse } from '@nestjs/swagger';
 import { StoreByStateResponseDto } from './dto/responses/store-by-state-response.dto';
 import { StoreByIdResponseDto } from './dto/responses/store-by-id-response.dto';
 import { ListAllResponseDto } from './dto/responses/list-all-response.dto';
+import { PaginationQueryDto } from 'src/common/dtos/pagination-query.dto';
 
 @Controller('store')
 export class StoreController {
@@ -24,16 +25,16 @@ export class StoreController {
   })
   @Get()
   async listAll(
-    @Query('limit') limit = 10,
-    @Query('offset') offset = 0,
+    @Query() query: PaginationQueryDto,
   ): Promise<ListAllResponseDto> {
-    const stores = await this.storeService.listAllStores(+limit, +offset);
+    const { limit = 10, offset = 0 } = query;
+    const stores = await this.storeService.listAllStores(limit, offset);
 
     return {
       status: 'success',
       data: { stores },
-      limit: limit,
-      offset: offset,
+      limit,
+      offset,
       total: stores.length,
     };
   }
@@ -85,20 +86,20 @@ export class StoreController {
   @Get('/state/:state')
   async storeByState(
     @Param('state') state: string,
-    @Query('limit') limit = 10,
-    @Query('offset') offset = 0,
+    @Query() query: PaginationQueryDto,
   ): Promise<StoreByStateResponseDto> {
+    const { limit = 10, offset = 0 } = query;
     const stores = await this.storeService.findStoresByState(
       state,
-      +limit,
-      +offset,
+      limit,
+      offset,
     );
 
     return {
       status: 'success',
       data: { stores },
-      limit: +limit,
-      offset: +offset,
+      limit,
+      offset,
       total: stores.length,
     };
   }
