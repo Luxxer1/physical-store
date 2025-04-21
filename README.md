@@ -1,98 +1,118 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Physical Store API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API RESTful desenvolvida em NestJS para localizar lojas físicas e calcular opções de frete com base no CEP do cliente.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Tecnologias
 
-## Description
+- Node.js
+- NestJS
+- TypeScript
+- MongoDB (Mongoose)
+- Swagger (OpenAPI)
+- Jest (Testes unitários e E2E)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Funcionalidades
 
-## Project setup
+- Listagem de todas as lojas cadastradas com paginação.
+- Busca de loja por ID.
+- Busca de lojas por estado.
+- Busca da loja mais próxima e cálculo de frete (Motoboy, Sedex, PAC) a partir de um CEP.
+- Integração simulada com ViaCEP, Google Maps e MelhorEnvio.
+- Tratamento global de exceções e logs estruturados.
+
+## Instalação
 
 ```bash
-$ npm install
+git clone https://github.com/seu-usuario/physical-store.git
+cd physical-store
+npm install
 ```
 
-## Compile and run the project
+## Configuração
+
+Crie um arquivo .env na raiz do projeto com as seguintes variáveis:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+DATABASE_URI=mongodb://localhost:27017/physical-store
+GOOGLE_API_KEY=sua_google_api_key
+MELHOR_ENVIO_TOKEN=seu_token_melhor_envio
 ```
 
-## Run tests
+## Executando o Projeto
+
+### Desenvolvimento
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run start:dev
 ```
 
-## Deployment
+Acesse a documentação Swagger em:  
+http://localhost:3000/swagger
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Produção
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run build
+npm run start:prod
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## Testes
 
-## Resources
+### Unitários e integração
 
-Check out a few resources that may come in handy when working with NestJS:
+```bash
+npm run test
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### E2E
 
-## Support
+```bash
+npm run test:e2e
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Cobertura
 
-## Stay in touch
+```
+npm run test:cov
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Endpoints Principais
 
-## License
+- GET /store — Lista todas as lojas (com paginação)
+- GET /store/id/:id — Busca loja por ID
+- GET /store/state/:state — Busca lojas por estado
+- GET /store/cep/:cep — Busca loja mais próxima e opções de frete
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Consulte exemplos de request/response e parâmetros na documentação Swagger.
+
+## Estrutura do Projeto
+
+- src/store — Módulo principal de lojas (controller, service, model, DTOs)
+- src/common — Serviços externos, DTOs, filtros, logger, utils
+- test — Testes E2E
+
+## Scripts úteis
+
+- npm run lint — Lint do código
+- npm run format — Formata o código com Prettier
+
+## Observações
+
+- Os serviços externos (ViaCEP, Google Maps, MelhorEnvio) são mockados nos testes.
+- O projeto segue princípios de Clean Code, SOLID e boas práticas de API REST.
+
+## Autor
+
+- [Lucas Bastos](https://github.com/Luxxer1)
+
+## Contribuição
+
+Sinta-se à vontade para contribuir com o projeto. Se você identificar um erro ou tiver uma sugestão de melhoria, abra uma issue ou submeta um pull request.
+
+## Licença
+
+Este projeto está licenciado sob a Licença MIT. Veja o arquivo LICENSE para mais detalhes.
+
+---
+
+Projeto desenvolvido para o Desafio 3 do Programa de Bolsas Backend (Node.js) — Compasso UOL.
