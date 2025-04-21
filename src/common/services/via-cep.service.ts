@@ -2,6 +2,7 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { ViaCepResponse } from '../interfaces/via-cep.interface';
+import { getAxiosStatus } from '../utils/get-axios-status.utils';
 
 @Injectable()
 export class ViaCepService {
@@ -24,6 +25,25 @@ export class ViaCepService {
     } catch (err: unknown) {
       if (err instanceof HttpException) {
         throw err;
+      }
+
+      const status = getAxiosStatus(err);
+      switch (status) {
+        case 400:
+          throw new HttpException(
+            '[ViaCepService] Requisição inválida para o ViaCEP.',
+            HttpStatus.BAD_REQUEST,
+          );
+        case 404:
+          throw new HttpException(
+            '[ViaCepService] Endpoint ViaCEP não encontrado.',
+            HttpStatus.NOT_FOUND,
+          );
+        case 429:
+          throw new HttpException(
+            '[ViaCepService] Limite de requisições do ViaCEP excedido.',
+            HttpStatus.TOO_MANY_REQUESTS,
+          );
       }
 
       const errMsg =
