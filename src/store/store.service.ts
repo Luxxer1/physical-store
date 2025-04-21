@@ -183,14 +183,30 @@ export class StoreService {
         type: 'PDV',
         shipping: [
           {
-            estimatedDelivery: '1 dia útil',
+            estimatedDelivery: `${store.shippingTimeInDays} dias úteis`,
             price: 15.0,
             description: 'Motoboy',
           },
         ],
       };
     }
-    return this.melhorEnvioService.calculate(store.zipCode, toCep);
+    const result = await this.melhorEnvioService.calculate(
+      store.zipCode,
+      toCep,
+    );
+    return {
+      ...result,
+      shipping: result.shipping.map((opt) => {
+        // Extrai o número do prazo do texto "X dias úteis"
+        const match = opt.estimatedDelivery.match(/(\d+)/);
+        const prazo = match ? parseInt(match[1], 10) : 0;
+        const totalPrazo = prazo + (store.shippingTimeInDays || 0);
+        return {
+          ...opt,
+          estimatedDelivery: `${totalPrazo} dias úteis`,
+        };
+      }),
+    };
   }
 
   private formatCepResponse(

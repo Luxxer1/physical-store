@@ -65,6 +65,12 @@ export class StoreDto {
    */
   businessHour: string;
 
+  /**
+   * Tempo de preparo/postagem da loja em dias úteis
+   * @example 1
+   */
+  shippingTimeInDays: number;
+
   /** Localização geográfica da loja */
   @ApiProperty({ type: () => LocationDto })
   location: LocationDto;
