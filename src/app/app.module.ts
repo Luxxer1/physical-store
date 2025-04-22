@@ -4,11 +4,13 @@ import { ConfigModule } from '@nestjs/config';
 import { StoreModule } from 'src/store/store.module';
 import configuration from 'src/config/configuration';
 
+const envFilePath = `${process.cwd()}/${process.env.NODE_ENV || 'development'}.env`;
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
+      envFilePath,
       load: [configuration],
     }),
     StoreModule,
