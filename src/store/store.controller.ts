@@ -38,7 +38,7 @@ export class StoreController {
       data: { stores },
       limit,
       offset,
-      total: total,
+      total,
     };
   }
 
